@@ -12,7 +12,7 @@ interface ProfileSettingsViewProps {
 
 export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
   initialUsername = 'Lê Hồng Sơn',
-  initialBio = 'Sinh viên K20 CNTT • Quyết tâm không thức khuya & duy trì chuỗi học tập đều đặn ☕🔥',
+  initialBio = 'Gen Z Glow-up • Kiên quyết không thức khuya, ăn uống healthy & làm việc tập trung ☕🔥',
   initialAvatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   initialStreakDays = 7,
   onLogout,
@@ -124,7 +124,7 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
       {/* Header */}
       <div>
         <h2 className="text-2xl font-black text-[#2C221E] tracking-tight">Tài Khoản & Cài Đặt</h2>
-        <p className="text-sm text-[#736357]">Quản lý hồ sơ sinh viên, thiết lập quyền riêng tư và bảo mật</p>
+        <p className="text-sm text-[#736357]">Quản lý hồ sơ cá nhân, thiết lập quyền riêng tư và bảo mật</p>
       </div>
 
       {/* Tabs Selector */}
@@ -186,9 +186,9 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
                   <h3 className="text-xl font-black text-[#2C221E]">{username}</h3>
                   <div className="flex items-center justify-center md:justify-start space-x-2 mt-1">
                     <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-300">
-                      Sinh Viên Kỷ Luật
+                      Aura Gen Z ✨
                     </span>
-                    <span className="text-xs text-[#918072]">k20@auraday.com</span>
+                    <span className="text-xs text-[#918072]">sonle@auraday.com</span>
                   </div>
                 </div>
 
@@ -326,7 +326,7 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
               <div className="p-4 rounded-2xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 text-center">
                 <span className="text-2xl">⏳</span>
                 <div className="text-lg font-black text-[#2C221E] mt-1">420 Phút</div>
-                <div className="text-[11px] font-semibold text-[#918072]">Tổng giờ tự học</div>
+                <div className="text-[11px] font-semibold text-[#918072]">Tổng giờ tập trung</div>
               </div>
             </div>
           </div>
@@ -350,7 +350,7 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
                   mode: 'PUBLIC' as PrivacyMode,
                   icon: '🌐',
                   label: 'Công Khai',
-                  desc: 'Mọi sinh viên trên AuraDay đều có thể xem bài của bạn'
+                  desc: 'Mọi người trên AuraDay đều có thể xem bài của bạn'
                 },
                 {
                   mode: 'FRIENDS_ONLY' as PrivacyMode,
@@ -414,7 +414,7 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFEAE2]">
                 <div>
                   <div className="text-xs font-bold text-[#2C221E]">Nhận Huých Nhắc Nhở ("Nudge" 🔔)</div>
-                  <div className="text-[11px] text-[#918072]">Bạn bè có thể bấm nút Nudge để nhắc bạn học bài hoặc ăn đúng giờ</div>
+                  <div className="text-[11px] text-[#918072]">Bạn bè có thể bấm nút Nudge để nhắc bạn tập trung làm việc hoặc ăn đúng giờ</div>
                 </div>
                 <button
                   type="button"
@@ -534,7 +534,7 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
             <div>
               <h4 className="text-sm font-black text-rose-900">Phiên Đăng Nhập & Đăng Xuất</h4>
               <p className="text-xs text-rose-700/80 mt-0.5">
-                Đăng xuất khỏi thiết bị này để bảo vệ quyền riêng tư nếu bạn dùng máy tính công cộng hoặc thư viện trường.
+                Đăng xuất khỏi thiết bị này để bảo vệ quyền riêng tư nếu bạn dùng máy tính công cộng hoặc quán cà phê.
               </p>
             </div>
 

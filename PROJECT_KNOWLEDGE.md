@@ -5,8 +5,8 @@
 
 ## 1. 📌 TỔNG QUAN DỰ ÁN (PROJECT OVERVIEW)
 - **Tên dự án**: **AuraDay** (AuraRoutine)
-- **Ý tưởng cốt lõi**: Nền tảng Web App rèn luyện kỷ luật cá nhân kết hợp mạng xã hội trách nhiệm (Accountability Social Network) dành riêng cho sinh viên.
-- **Vấn đề giải quyết**: Sinh viên thường trì hoãn, ăn uống thất thường (bỏ bữa, ăn vặt khuya), thiếu tập trung học tập. AuraDay biến việc rèn luyện kỷ luật thành một hành trình minh bạch, có bằng chứng hình ảnh (Proof) và có bạn bè đồng hành, nhắc nhở ("nudge").
+- **Ý tưởng cốt lõi**: Nền tảng Web App rèn luyện kỷ luật cá nhân kết hợp mạng xã hội trách nhiệm (Accountability Social Network) dành cho tất cả mọi người, đặc biệt định hướng phong cách sống và thẩm mỹ Gen Z (Gen Z Lifestyle & Deep Work).
+- **Vấn đề giải quyết**: Người trẻ và Gen Z thường dễ bị xao nhãng bởi mạng xã hội, trì hoãn, ăn uống thất thường (bỏ bữa, ăn vặt khuya), thức khuya và thiếu tập trung trong công việc/học tập. AuraDay biến việc rèn luyện kỷ luật thành một hành trình thẩm mỹ, tích cực, có bằng chứng hình ảnh (Locker Proof) và có đồng đội cùng giám sát, nhắc nhở ("Nudge").
 - **Kho lưu trữ GitHub**: `https://github.com/sonle-dev/AuraDay.git`
 - **Nhánh chính**: `main`
 
@@ -44,7 +44,7 @@
 #### 1. `User` (Bảng `users`)
 - `id` (`BIGSERIAL`, PK): Khóa chính tự tăng.
 - `username` (`VARCHAR(50)`, NOT NULL, UNIQUE): Tên đăng nhập.
-- `email` (`VARCHAR(100)`, NOT NULL, UNIQUE): Email sinh viên.
+- `email` (`VARCHAR(100)`, NOT NULL, UNIQUE): Email người dùng.
 - `password_hash` (`VARCHAR(255)`, NOT NULL): Mật khẩu mã hóa BCrypt (`@JsonIgnore`).
 - `avatar_url` (`VARCHAR(500)`): URL ảnh đại diện.
 - `role` (`VARCHAR(20)`, Default `ROLE_USER`): Phân quyền (`ROLE_USER`, `ROLE_ADMIN`).
@@ -97,9 +97,9 @@
 ### 4.1. Authentication & Profile API
 | Phương thức | Endpoint | Auth | Mô tả |
 | :--- | :--- | :---: | :--- |
-| `POST` | `/api/auth/register` | Public | Đăng ký tài khoản sinh viên mới (`username`, `email`, `password`, `avatarUrl`). Trả về JWT Token. |
+| `POST` | `/api/auth/register` | Public | Đăng ký tài khoản mới (`username`, `email`, `password`, `avatarUrl`). Trả về JWT Token. |
 | `POST` | `/api/auth/login` | Public | Đăng nhập bằng username hoặc email. Trả về `accessToken`, `refreshToken`, thông tin User. |
-| `GET` | `/api/users/me` | Bearer | Lấy thông tin hồ sơ (Profile) của sinh viên hiện tại đăng nhập (kèm `bio`, `defaultPrivacyMode`). |
+| `GET` | `/api/users/me` | Bearer | Lấy thông tin hồ sơ (Profile) của người dùng hiện tại đăng nhập (kèm `bio`, `defaultPrivacyMode`). |
 | `PUT` | `/api/users/me` | Bearer | Cập nhật thông tin hồ sơ cá nhân (`username`, `bio`, `avatarUrl`, `defaultPrivacyMode`). Kiểm tra chống trùng username. |
 | `PUT` | `/api/users/me/password` | Bearer | Đổi mật khẩu tài khoản (xác thực BCrypt mật khẩu cũ, kiểm tra xác nhận mật khẩu mới, chặn trùng mật khẩu cũ). |
 | `GET` | `/api/users/me/stats` | Bearer | Lấy thống kê kỷ luật cá nhân: Tổng số bài Locker, Tổng số bạn bè, Chuỗi ngày Streak liên tiếp, Tổng số phút tự học. |
@@ -120,7 +120,7 @@
 | `GET` | `/api/tasks/{id}` | Bearer | Lấy chi tiết một nhiệm vụ (kiểm tra quyền sở hữu). |
 | `PUT` | `/api/tasks/{id}` | Bearer | Cập nhật toàn diện thông tin nhiệm vụ. |
 | `PATCH`| `/api/tasks/{id}/toggle` | Bearer | Chuyển đổi nhanh trạng thái hoàn thành (`true`/`false`). |
-| `DELETE`| `/api/tasks/{id}` | Bearer | Xóa nhiệm vụ của sinh viên. |
+| `DELETE`| `/api/tasks/{id}` | Bearer | Xóa nhiệm vụ của người dùng. |
 
 ### 4.4. Locker & Proof Post API
 | Phương thức | Endpoint | Auth | Mô tả |

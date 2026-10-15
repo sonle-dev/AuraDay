@@ -14,7 +14,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onTabChange,
   children,
   streakDays = 7,
-  username = "Sinh Viên Kỷ Luật",
+  username = "Gen Z Kỷ Luật",
   avatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
 }) => {
   const navItems = [

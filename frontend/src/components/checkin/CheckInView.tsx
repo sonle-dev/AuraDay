@@ -37,7 +37,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
   const mealOptions: { id: MealStatus; label: string; icon: string; desc: string }[] = [
     { id: 'ON_TIME', label: 'Đúng Giờ', icon: '🍲', desc: 'Ăn no & đúng cữ' },
     { id: 'LATE', label: 'Ăn Trễ', icon: '⏳', desc: 'Lệch cữ sinh hoạt' },
-    { id: 'SKIPPED', label: 'Bỏ Bữa', icon: '⚠️', desc: 'Bận học / Quên ăn' },
+    { id: 'SKIPPED', label: 'Bỏ Bữa', icon: '⚠️', desc: 'Bận rộn / Quên ăn' },
   ];
 
   const handleQuickAddMinutes = (mins: number) => {
@@ -46,7 +46,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
 
   const handleSaveCheckIn = () => {
     if (!isEligible) {
-      alert('Kỷ luật AuraDay yêu cầu số phút tự học tối thiểu từ 15 phút trở lên!');
+      alert('Kỷ luật AuraDay yêu cầu thời gian tập trung tối thiểu từ 15 phút trở lên!');
       return;
     }
 
@@ -61,7 +61,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
     if (onCheckInSuccess) {
       onCheckInSuccess(payload);
     } else {
-      alert(`Đã lưu check-in kỷ luật thành công! (${studyMinutes} phút học)`);
+      alert(`Đã lưu check-in kỷ luật thành công! (${studyMinutes} phút tập trung)`);
     }
   };
 
@@ -131,7 +131,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
         <div className="flex items-center justify-between mb-4">
           <div>
             <label className="text-xs font-bold text-amber-800 uppercase tracking-wider block">
-              2. Đồng Hồ Tập Trung Học Tập (Focus Timer)
+              2. Đồng Hồ Tập Trung (Deep Work & Focus Timer)
             </label>
             <span className="text-xs text-[#918072]">Tối thiểu 15 phút để được ghi nhận vào nhật ký</span>
           </div>
@@ -183,7 +183,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
                 {String(studyMinutes).padStart(2, '0')}:{String(remainingSeconds).padStart(2, '0')}
               </span>
               <span className="text-xs text-amber-800 font-bold uppercase tracking-widest mt-1">
-                {studyMinutes} Phút Tự Học
+                {studyMinutes} Phút Tập Trung
               </span>
             </div>
           </div>
@@ -199,7 +199,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
                   : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black shadow-amber-500/25 scale-105'
               }`}
             >
-              {isRunning ? '⏸ Tạm Dừng' : '▶ Bắt Đầu Học'}
+              {isRunning ? '⏸ Tạm Dừng' : '▶ Bắt Đầu Tập Trung'}
             </button>
 
             <button

@@ -1,26 +1,27 @@
-# 🌟 AuraDay - Student Discipline & Social Accountability Platform
+# 🌟 AuraDay - Daily Discipline & Social Accountability Platform (Gen Z Lifestyle)
 
-> **Web App Kỷ luật kết hợp Mạng xã hội dành cho sinh viên**  
-> Giúp sinh viên duy trì nề nếp sinh hoạt (ăn uống đúng giờ, chống ăn vặt, tự học tập trung) với sự đồng hành và nhắc nhở từ bạn bè.
+> **Không gian Kỷ luật Cá nhân kết hợp Mạng Xã Hội Trách Nhiệm dành cho tất cả mọi người**  
+> Định hướng thẩm mỹ và phong cách sống Gen Z: Duy trì thói quen sống lành mạnh (dậy sớm, ăn uống đúng giờ, healthy, Deep Work tập trung) với sự đồng hành và nhắc nhở từ bạn bè ("Accountability Buddies").
 
 ---
 
 ## 🚀 Công Nghệ Sử Dụng (Tech Stack)
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Vite, Lucide Icons (Gen Z Warm Light aesthetic)
 - **Backend**: Java 17+, Spring Boot 3.3.4 (Spring Web, Spring Data JPA, Spring Security + JWT, Validation)
 - **Database**: PostgreSQL (Development & Production), H2 (In-memory testing)
-- **Database Migration**: Flyway (`V1__init_schema.sql`)
+- **Database Migration**: Flyway (`V1__init_schema.sql`, `V2__add_user_bio_and_settings.sql`)
 - **Authentication**: Stateless Spring Security + JJWT 0.12.6
 - **Build Tool**: Gradle (với Gradle Wrapper đi kèm) & Maven (`pom.xml`)
 
 ---
 
 ## 🗄️ Cấu Trúc Thực Thể (Entities / Models)
-1. **User**: Quản lý tài khoản sinh viên (`id`, `username`, `email`, `password_hash`, `avatar_url`, `role`, `created_at`).
+1. **User**: Quản lý tài khoản người dùng (`id`, `username`, `email`, `password_hash`, `bio`, `avatar_url`, `default_privacy_mode`, `role`, `created_at`).
 2. **DailyLog**: Nhật ký kỷ luật hàng ngày (`id`, `user_id`, `log_date`, `ate_on_time`, `had_snacks`, `study_minutes`, `note`).
 3. **CustomTask**: Nhiệm vụ kỷ luật tự chọn theo ngày (`id`, `user_id`, `title`, `category`, `target_time`, `is_completed`).
 4. **Friendship**: Quan hệ bạn bè đồng hành (`id`, `user_id`, `friend_id`, `status` [PENDING, ACCEPTED, REJECTED, BLOCKED]).
 5. **ProofPost**: Bài đăng mạng xã hội kèm ảnh minh chứng (`id`, `user_id`, `daily_log_id`, `image_url`, `caption`, `privacy_mode` [PUBLIC, FRIENDS_ONLY, PRIVATE]).
-6. **Interaction**: Tương tác bài đăng (`id`, `post_id`, `user_id`, `type` [LIKE, COMMENT, NUDGE], `content`). *Đặc biệt: **Nudge** dùng để "đẩy" và nhắc nhở bạn bè giữ kỷ luật!*
+6. **Interaction**: Tương tác bài đăng (`id`, `post_id`, `user_id`, `type` [LIKE, COMMENT, NUDGE], `content`). *Đặc biệt: **Nudge** dùng để "huých" và nhắc nhở bạn bè giữ kỷ luật!*
 
 ---
 

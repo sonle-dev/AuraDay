@@ -9,12 +9,12 @@ export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<'feed' | 'checkin' | 'locker' | 'friends' | 'profile'>('feed');
   const [streakDays, setStreakDays] = useState<number>(7);
   const [username, setUsername] = useState<string>('Lê Hồng Sơn');
-  const [bio, setBio] = useState<string>('Sinh viên K20 CNTT • Quyết tâm không thức khuya & duy trì chuỗi học tập đều đặn ☕🔥');
+  const [bio, setBio] = useState<string>('Gen Z Glow-up • Kiên quyết không thức khuya, ăn uống healthy & làm việc tập trung ☕🔥');
   const [avatarUrl, setAvatarUrl] = useState<string>('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80');
 
   const handleCheckInSuccess = (data: any) => {
     setStreakDays((prev) => prev + 1);
-    alert(`🔥 Tuyệt vời! Bạn đã hoàn thành check-in (${data.studyMinutes} phút học). Chuỗi kỷ luật tăng lên ${streakDays + 1} ngày!`);
+    alert(`🔥 Tuyệt vời! Bạn đã hoàn thành check-in (${data.studyMinutes} phút tập trung). Chuỗi kỷ luật tăng lên ${streakDays + 1} ngày!`);
     setCurrentTab('locker');
   };
 
@@ -55,7 +55,7 @@ export const App: React.FC = () => {
           <div className="text-4xl">👥🤝</div>
           <h3 className="text-lg font-black text-[#2C221E]">Đồng Hành & Giám Sát Kỷ Luật</h3>
           <p className="text-sm text-[#736357] max-w-md mx-auto">
-            Kết nối với bạn bè cùng phòng, bạn cùng lớp để cùng giữ thói quen dậy sớm, ăn uống điều độ và không lướt điện thoại khuya.
+            Kết nối với bạn bè, đồng đội (Accountability Buddies) để cùng giữ thói quen dậy sớm, ăn uống healthy, làm việc năng suất và không thức khuya.
           </p>
           <button
             onClick={() => setCurrentTab('feed')}
