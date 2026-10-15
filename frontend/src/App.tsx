@@ -126,7 +126,7 @@ export const App: React.FC = () => {
           onLogout={handleLogout}
         />
       )}
-      {currentTab === 'friends' && <FriendsView />}
+      {currentTab === 'friends' && <FriendsView currentUsername={username} />}
     </AppLayout>
   );
 };
