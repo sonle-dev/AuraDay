@@ -57,55 +57,55 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   ];
 
   return (
-    <div className="min-h-screen bg-[#1A1614] text-[#F5EBE1] flex flex-col md:flex-row antialiased selection:bg-amber-600/30 selection:text-amber-200">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#2C221E] flex flex-col md:flex-row antialiased selection:bg-amber-200 selection:text-amber-900">
       {/* ================= DESKTOP SIDEBAR ================= */}
-      <aside className="hidden md:flex flex-col w-72 bg-[#221C18]/90 backdrop-blur-xl border-r border-amber-900/25 p-6 justify-between sticky top-0 h-screen z-30">
+      <aside className="hidden md:flex flex-col w-72 bg-white/85 backdrop-blur-xl border-r border-[#EFEAE2] p-6 justify-between sticky top-0 h-screen z-30">
         <div>
           {/* Logo Brand */}
           <div className="flex items-center space-x-3 mb-8 cursor-pointer group" onClick={() => onTabChange('feed')}>
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#2A221D] to-[#1A1614] border border-amber-500/30 p-1 flex items-center justify-center shadow-lg shadow-amber-950/50 group-hover:border-amber-400 transition-all">
-              <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 2px 4px rgba(217, 119, 6, 0.4))" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FFF5EB] to-[#FEF3C7] border border-amber-200/90 p-1 flex items-center justify-center shadow-sm shadow-amber-900/10 group-hover:scale-105 group-hover:border-amber-400 transition-all">
+              <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 2px 4px rgba(217, 119, 6, 0.25))" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">
+              <h1 className="text-xl font-black tracking-tight bg-gradient-to-r from-amber-600 via-orange-500 to-amber-700 bg-clip-text text-transparent">
                 AuraDay
               </h1>
-              <p className="text-xs text-amber-200/60 font-medium">Kỷ Luật & Bạn Bè</p>
+              <p className="text-xs text-[#918072] font-semibold tracking-wide">Kỷ Luật & Bạn Bè</p>
             </div>
           </div>
 
           {/* Streak Status Card */}
-          <div className="p-4 rounded-2xl bg-[#2A221D] border border-amber-600/20 mb-8 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-20 h-20 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all"></div>
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#FFF9F2] via-[#FFF5EB] to-[#FEF3C7]/40 border border-amber-200/80 mb-8 relative overflow-hidden shadow-sm group">
+            <div className="absolute -right-4 -top-4 w-20 h-20 bg-amber-400/15 rounded-full blur-xl group-hover:bg-amber-400/25 transition-all"></div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2.5">
                 <span className="text-2xl animate-bounce">🔥</span>
                 <div>
-                  <div className="text-sm font-semibold text-amber-400">Chuỗi Kỷ Luật</div>
-                  <div className="text-xl font-extrabold text-[#F5EBE1]">{streakDays} Ngày Liên Tiếp</div>
+                  <div className="text-xs font-bold text-amber-800 uppercase tracking-wider">Chuỗi Kỷ Luật</div>
+                  <div className="text-lg font-black text-[#2C221E]">{streakDays} Ngày Liên Tiếp</div>
                 </div>
               </div>
             </div>
-            <div className="w-full bg-[#1A1614] h-2 rounded-full mt-3 overflow-hidden">
-              <div className="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full transition-all duration-500" style={{ width: '85%' }}></div>
+            <div className="w-full bg-[#EFEAE2] h-2 rounded-full mt-3 overflow-hidden">
+              <div className="bg-gradient-to-r from-amber-500 to-orange-400 h-full rounded-full transition-all duration-500 shadow-sm" style={{ width: '85%' }}></div>
             </div>
           </div>
 
           {/* Nav List */}
-          <nav className="space-y-2">
+          <nav className="space-y-1.5">
             {navItems.map((item) => {
               const isActive = currentTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => onTabChange(item.id)}
-                  className={`w-full flex items-center space-x-3.5 px-4 py-3.5 rounded-2xl font-medium transition-all duration-200 ${
+                  className={`w-full flex items-center space-x-3.5 px-4 py-3 rounded-2xl font-semibold text-sm transition-all duration-200 ${
                     isActive
-                      ? 'bg-gradient-to-r from-amber-600/20 to-amber-500/10 text-amber-400 border border-amber-600/30 shadow-md shadow-amber-950/40'
-                      : 'text-[#A8998C] hover:text-[#F5EBE1] hover:bg-[#2A221D]/60'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-500/25 scale-[1.02]'
+                      : 'text-[#736357] hover:text-[#2C221E] hover:bg-[#F5F0E8]'
                   }`}
                 >
-                  <span className={`${isActive ? 'text-amber-400' : 'text-[#A8998C]'}`}>{item.icon}</span>
+                  <span className={`${isActive ? 'text-white' : 'text-[#918072]'}`}>{item.icon}</span>
                   <span>{item.label}</span>
                 </button>
               );
@@ -114,11 +114,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
 
         {/* User Card */}
-        <div className="p-3.5 rounded-2xl bg-[#2A221D]/70 border border-amber-900/20 flex items-center space-x-3">
-          <img src={avatarUrl} alt={username} className="w-10 h-10 rounded-full object-cover border border-amber-500/40" />
+        <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFEAE2] flex items-center space-x-3 shadow-sm">
+          <img src={avatarUrl} alt={username} className="w-10 h-10 rounded-full object-cover border-2 border-amber-300" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate text-[#F5EBE1]">{username}</p>
-            <p className="text-xs text-amber-400/80">K20 - CNTT</p>
+            <p className="text-sm font-bold truncate text-[#2C221E]">{username}</p>
+            <p className="text-xs text-amber-700 font-medium">K20 - CNTT</p>
           </div>
         </div>
       </aside>
@@ -126,15 +126,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {/* ================= MAIN CONTENT AREA ================= */}
       <main className="flex-1 flex flex-col min-w-0 pb-24 md:pb-8">
         {/* Mobile Header Bar */}
-        <header className="md:hidden flex items-center justify-between p-4 bg-[#221C18]/90 backdrop-blur-md border-b border-amber-900/25 sticky top-0 z-20">
+        <header className="md:hidden flex items-center justify-between p-4 bg-white/90 backdrop-blur-md border-b border-[#EFEAE2] sticky top-0 z-20">
           <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#2A221D] border border-amber-500/30 p-1 flex items-center justify-center shadow-md">
-              <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 1px 3px rgba(217, 119, 6, 0.4))" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFF5EB] to-[#FEF3C7] border border-amber-200 p-1 flex items-center justify-center shadow-sm">
+              <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 1px 2px rgba(217, 119, 6, 0.2))" />
             </div>
-            <span className="font-bold text-amber-300 tracking-tight">AuraDay</span>
+            <span className="font-extrabold text-amber-700 tracking-tight">AuraDay</span>
           </div>
 
-          <div className="flex items-center space-x-2 bg-[#2A221D] px-3 py-1 rounded-full border border-amber-600/25 text-xs text-amber-300 font-semibold">
+          <div className="flex items-center space-x-1.5 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs text-amber-800 font-bold">
             <span>🔥</span>
             <span>{streakDays} ngày</span>
           </div>
@@ -147,7 +147,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       </main>
 
       {/* ================= MOBILE BOTTOM NAVIGATION ================= */}
-      <nav className="md:hidden fixed bottom-3 left-3 right-3 bg-[#26211E]/90 backdrop-blur-2xl border border-amber-600/25 rounded-3xl p-2 z-40 shadow-2xl shadow-black/80">
+      <nav className="md:hidden fixed bottom-3 left-3 right-3 bg-white/95 backdrop-blur-2xl border border-[#EFEAE2] rounded-3xl p-1.5 z-40 shadow-xl shadow-amber-950/10">
         <div className="flex items-center justify-around">
           {navItems.map((item) => {
             const isActive = currentTab === item.id;
@@ -156,13 +156,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
                 className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all duration-200 ${
-                  isActive ? 'text-amber-400 scale-105' : 'text-[#A8998C]'
+                  isActive ? 'text-amber-600 font-bold scale-105' : 'text-[#918072]'
                 }`}
               >
-                <div className={`p-1 rounded-xl ${isActive ? 'bg-amber-500/15' : ''}`}>
+                <div className={`p-1.5 rounded-xl ${isActive ? 'bg-amber-100/70 text-amber-700' : ''}`}>
                   {item.icon}
                 </div>
-                <span className="text-[11px] font-medium mt-0.5 tracking-tight">{item.label}</span>
+                <span className="text-[11px] font-semibold mt-0.5 tracking-tight">{item.label}</span>
               </button>
             );
           })}

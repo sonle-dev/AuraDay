@@ -39,10 +39,10 @@ export const FeedView: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Top Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-950/40 via-[#26211E] to-[#26211E] border border-amber-600/30 flex items-center justify-between">
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-100/80 via-orange-50/70 to-white border border-amber-200/80 shadow-sm shadow-amber-950/5 flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-black text-[#F5EBE1] tracking-tight">Bảng Tin Kỷ Luật Sinh Viên</h2>
-          <p className="text-xs text-[#A8998C] mt-1">Cùng bạn bè thúc đẩy, giám sát và giữ vững nề nếp mỗi ngày</p>
+          <h2 className="text-xl font-black text-[#2C221E] tracking-tight">Bảng Tin Kỷ Luật Sinh Viên</h2>
+          <p className="text-xs text-[#736357] mt-1">Cùng bạn bè thúc đẩy, giám sát và giữ vững nề nếp mỗi ngày</p>
         </div>
         <div className="text-3xl">☕📖</div>
       </div>

@@ -237,20 +237,27 @@ d:\AuraDay\
 | **2026-10-16 (v2)** | Antigravity AI | Hoàn thiện 4 nhóm nghiệp vụ chính: **1. Auth API** (Register, Login JWT, Profile `/users/me`), **2. Daily Log & Task API** (Check-in ăn uống, học tập >= 15p, CRUD CustomTask), **3. Locker & Proof Post API** (Upload ảnh minh chứng lưu local, lọc Locker theo ngày/tháng/năm và privacyMode), **4. Social & Feed API** (Gửi/chấp nhận kết bạn, Friend Feed, Thả tim, Bình luận, Nudge). Tích hợp JwtAuthenticationFilter, GlobalExceptionHandler. Bổ sung 4 bộ Controller Integration Test Suites (Tổng 18 tests PASS 100%). | Tests Passed (18/18 - 100%), Pushed commit `bed559d`. |
 | **2026-10-16 (v3)** | Antigravity AI | Thiết kế toàn diện Frontend AuraRoutine phong cách **Warm Tech / Cozy Dark Mode** (#1A1614, #26211E, Cam hổ phách #D97706, Vàng ấm #F59E0B): Responsive Desktop Left Sidebar + Mobile Bottom Navigation, Focus Timer >= 15p (vòng tròn tiến độ SVG), Tủ khóa Locker kèm Popup Modal đổi quyền riêng tư (Công khai/Bạn bè/Chỉ mình tôi), Bảng tin Feed với hiệu ứng Thả tim nổ tim và nút **Nudge** rung nhẹ (micro-interaction shake animation). Tạo prototype tương tác Generative UI. | Frontend Components & UI Preview Built, Tests 18/18 PASS, Ready to push. |
 | **2026-10-16 (v4)** | Antigravity AI | Tích hợp logo chính thức AuraDay (ảnh monogram AD nền trong suốt do người dùng cung cấp) vào favicon trang web, Sidebar Desktop, Mobile Navigation Bar. Thiết lập kết nối đồng bộ Backend Spring Boot với CSDL PostgreSQL 18 thực tế trên cổng 5432 và Frontend Vite trên cổng 3000. | All services active, Git tracked & updated. |
+| **2026-10-16 (v5)** | Antigravity AI | Tái thiết kế toàn bộ giao diện Frontend theo phong cách **Gen Z Warm Light (Tông Ấm Sáng, Dịu Mắt & Trẻ Trung)**: Chuyển đổi từ Cozy Dark sang nền kem vani / sữa yến mạch dịu mắt `#FAF8F5`, thẻ card trắng ấm viền cát `#FFFFFF` + `#EFEAE2`, chữ màu cà phê espresso `#2C221E` (chống mỏi mắt, không gắt), màu nhấn mật ong ấm & cam đào `#F59E0B` / `#F97316`, cập nhật Focus Timer, Locker, Feed, Nudge toast và tạo `tsconfig.json` cho bản build hoàn chỉnh. | Build & Tests 100% PASS, Hot Reloaded. |
 
 ---
 
-## 8. 🎨 THIẾT KẾ GIAO DIỆN FRONTEND (WARM TECH / COZY DARK MODE)
-- **Bảng màu chủ đạo**:
-  - Nền chính: `#1A1614` (Nâu cà phê đậm / Cozy Dark)
-  - Bề mặt kính: `#221C18`, `#26211E`, `#2A221D` (Glassmorphism mờ với viền `border-amber-600/20`)
-  - Điểm nhấn: Cam hổ phách `#D97706`, Vàng ấm `#F59E0B`, Cam đất `#EA580C`
-  - Màu chữ: Kem sáng `#F5EBE1`, Chữ phụ `#A8998C`
+## 8. 🎨 THIẾT KẾ GIAO DIỆN FRONTEND (GEN Z WARM LIGHT / DỊU MẮT & NĂNG ĐỘNG)
+- **Bảng màu chủ đạo (Warm Light Aesthetic)**:
+  - Nền chính: `#FAF8F5` (Vani / Sữa yến mạch ấm - siêu dịu mắt, chống chói lóa so với nền trắng tinh)
+  - Thẻ & Bề mặt: `#FFFFFF` (Trắng ấm) với viền cát mảnh `#EFEAE2` và bóng đổ vi mô mềm `shadow-sm shadow-amber-950/5`
+  - Bề mặt phụ & Chip: `#F5F0E8` / `#FAF8F5` (Latte foam / Biscuit)
+  - Màu chữ tiêu đề: `#2C221E` (Cà phê Espresso ấm - độ tương phản cao nhưng không gay gắt như đen tuyền `#000`)
+  - Màu chữ nội dung: `#5D4F45` (Nâu cacao ấm) và `#736357` / `#918072` (Cát ấm dịu)
+  - Điểm nhấn Gen Z (Accents): Vàng mật ong `#F59E0B`, Cam đào hoàng hôn `#F97316`, Cam hổ phách `#D97706`
+  - Huy hiệu trạng thái:
+    - Chuỗi kỷ luật: Gradient `#FFF9F2` viền cam hổ phách mềm
+    - Đúng giờ: Xanh bơ nhạt `#ECFDF5` (`text-emerald-800`)
+    - Ăn vặt / Cảnh báo: Hồng đào nhạt `#FFF1F2` (`text-rose-700`)
 - **Bộ Component cốt lõi (`frontend/src/`)**:
-  - `components/layout/AppLayout.tsx`: Shell tương thích Desktop (Sidebar trái thanh thoát) và Mobile (Bottom Navigation tiện bấm 1 tay).
-  - `components/checkin/CheckInView.tsx`: Màn hình check-in 3 cữ ăn, toggle ăn vặt, Focus Study Timer tối thiểu 15 phút với vòng tròn SVG hoạt họa.
+  - `components/layout/AppLayout.tsx`: Shell tương thích Desktop (Sidebar kính ấm mờ) và Mobile (Bottom Navigation thanh thoát).
+  - `components/checkin/CheckInView.tsx`: Màn hình check-in 3 cữ ăn, toggle ăn vặt, Focus Study Timer tối thiểu 15 phút với vòng tròn SVG màu mật ong.
   - `components/locker/LockerView.tsx`: Tủ khóa bằng chứng lọc theo ngày/tháng/năm, Popup Modal phân quyền riêng tư (`Công khai`, `Bạn bè`, `Chỉ mình tôi`).
-  - `components/feed/PostCard.tsx` & `FeedView.tsx`: Thẻ bài đăng bảng tin, nút Like hiệu ứng nổ tim, nút Nudge rung lắc nhẹ (`animate-nudge` micro-interaction).
+  - `components/feed/PostCard.tsx` & `FeedView.tsx`: Thẻ bài đăng bảng tin, nút Like nổ tim, nút Nudge rung lắc vui nhộn (`animate-nudge` micro-interaction).
 
 ---
 

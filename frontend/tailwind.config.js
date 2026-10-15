@@ -8,22 +8,33 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        warm: {
+          bg: '#FAF8F5',        // Nền kem vani ấm dịu mắt
+          surface: '#F5F0E8',   // Bề mặt phụ latte / biscuit
+          card: '#FFFFFF',      // Nền card trắng ấm
+          cardHover: '#FDFBF7',
+          border: '#EFEAE2',    // Viền cát ấm nhẹ
+          borderHover: '#DECFC1',
+          text: '#2C221E',      // Chữ cà phê espresso ấm
+          body: '#5D4F45',      // Chữ nội dung cacao ấm
+          muted: '#918072',     // Chữ phụ cát ấm dịu
+          light: '#F8F4EE'
+        },
         cozy: {
-          bg: '#1A1614',        // Nâu cà phê đậm chủ đạo
-          surface: '#221C18',   // Bề mặt phụ
-          card: '#2A221D',      // Nền card kính mờ
-          cardHover: '#332A24', // Hover nhẹ
-          border: 'rgba(217, 119, 6, 0.18)', // Border cam hổ phách mảnh
-          text: '#F5EBE1',      // Màu chữ kem sáng ấm
-          muted: '#A8998C',     // Chữ phụ xám nâu ấm
-          dark: '#120F0D'
+          bg: '#FAF8F5',
+          surface: '#F5F0E8',
+          card: '#FFFFFF',
+          cardHover: '#FDFBF7',
+          border: 'rgba(217, 119, 6, 0.15)',
+          text: '#2C221E',
+          muted: '#736357',
+          dark: '#1C1512'
         },
         amber: {
-          primary: '#D97706',   // Cam hổ phách
-          warm: '#F59E0B',      // Vàng ấm mật ong
-          light: '#FDE68A',
-          terracotta: '#EA580C',// Cam đất
-          glow: 'rgba(217, 119, 6, 0.35)'
+          primary: '#F59E0B',   // Vàng mật ong ấm
+          warm: '#D97706',      // Cam hổ phách
+          coral: '#F97316',     // Cam đào hoàng hôn
+          glow: 'rgba(245, 158, 11, 0.25)'
         }
       },
       borderRadius: {

@@ -64,10 +64,10 @@ export const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <article className="p-6 rounded-3xl bg-[#26211E]/85 backdrop-blur-xl border border-amber-900/30 space-y-4 shadow-xl shadow-black/40 relative overflow-hidden transition-all hover:border-amber-500/40">
+    <article className="p-6 rounded-3xl bg-white border border-[#EFEAE2] space-y-4 shadow-sm shadow-amber-950/5 relative overflow-hidden transition-all hover:border-amber-300">
       {/* Toast Notification khi Nudge */}
       {nudgeFeedback && (
-        <div className="absolute top-3 left-6 right-6 z-10 p-2.5 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 text-stone-950 font-bold text-xs text-center shadow-lg shadow-amber-950/60 animate-bounce">
+        <div className="absolute top-3 left-6 right-6 z-10 p-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-stone-950 font-black text-xs text-center shadow-lg shadow-amber-500/25 animate-bounce">
           {nudgeFeedback}
         </div>
       )}
@@ -78,48 +78,48 @@ export const PostCard: React.FC<PostCardProps> = ({
           <img
             src={post.userAvatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"}
             alt={post.username}
-            className="w-11 h-11 rounded-full object-cover border-2 border-amber-500/40"
+            className="w-11 h-11 rounded-full object-cover border-2 border-amber-300"
           />
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-sm text-[#F5EBE1]">{post.username}</span>
-              <span className="bg-amber-600/20 text-amber-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-600/30">
+              <span className="font-bold text-sm text-[#2C221E]">{post.username}</span>
+              <span className="bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-amber-200/80">
                 🔥 Chuỗi 5 ngày
               </span>
             </div>
-            <span className="text-xs text-[#A8998C]">
+            <span className="text-xs text-[#918072]">
               {new Date(post.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} • Hôm nay
             </span>
           </div>
         </div>
 
         {/* Privacy Tag */}
-        <span className="text-[11px] font-medium text-[#A8998C] bg-[#1A1614] px-2.5 py-1 rounded-xl border border-white/5">
+        <span className="text-[11px] font-semibold text-[#736357] bg-[#FAF8F5] px-2.5 py-1 rounded-xl border border-[#EFEAE2]">
           {post.privacyMode === 'PUBLIC' ? '🌐 Công khai' : '👥 Bạn bè'}
         </span>
       </div>
 
       {/* Caption */}
       {post.caption && (
-        <p className="text-sm text-[#F5EBE1] leading-relaxed font-normal">
+        <p className="text-sm text-[#382D25] leading-relaxed font-normal">
           {post.caption}
         </p>
       )}
 
       {/* Proof Photo Display */}
-      <div className="relative rounded-2xl overflow-hidden bg-black/50 border border-white/10 group">
+      <div className="relative rounded-2xl overflow-hidden bg-amber-50/50 border border-[#EFEAE2] group">
         <img
           src={post.imageUrl}
           alt="Minh chứng"
           className="w-full max-h-[460px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
         />
-        <div className="absolute bottom-3 left-3 bg-[#1A1614]/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-amber-300 border border-amber-500/20">
+        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-emerald-800 border border-emerald-200/60 shadow-sm">
           ✓ Minh chứng đã xác thực
         </div>
       </div>
 
       {/* Interactive Action Bar */}
-      <div className="flex items-center justify-between pt-2 border-t border-white/5">
+      <div className="flex items-center justify-between pt-2 border-t border-[#EFEAE2]">
         <div className="flex items-center space-x-3">
           {/* 1. NÚT LIKE (Thả Tim) */}
           <button
@@ -127,8 +127,8 @@ export const PostCard: React.FC<PostCardProps> = ({
             onClick={handleToggleLike}
             className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all duration-200 ${
               isLiked
-                ? 'bg-rose-950/40 text-rose-400 border border-rose-500/40 shadow-sm shadow-rose-950'
-                : 'bg-[#1A1614] text-[#A8998C] hover:text-[#F5EBE1] hover:bg-[#2A221D] border border-white/5'
+                ? 'bg-rose-50 text-rose-600 border border-rose-200/80 shadow-sm'
+                : 'bg-[#FAF8F5] text-[#736357] hover:text-rose-600 hover:bg-rose-50/50 border border-[#EFEAE2]'
             }`}
           >
             <span className={`text-sm ${isLiked ? 'animate-heart' : ''}`}>❤️</span>
@@ -139,7 +139,7 @@ export const PostCard: React.FC<PostCardProps> = ({
           <button
             type="button"
             onClick={() => setShowComments(!showComments)}
-            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold bg-[#1A1614] text-[#A8998C] hover:text-[#F5EBE1] hover:bg-[#2A221D] border border-white/5 transition-all"
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold bg-[#FAF8F5] text-[#736357] hover:text-[#2C221E] hover:bg-[#F5F0E8] border border-[#EFEAE2] transition-all"
           >
             <span>💬</span>
             <span>{comments.length}</span>
@@ -150,10 +150,10 @@ export const PostCard: React.FC<PostCardProps> = ({
         <button
           type="button"
           onClick={handleNudge}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-2xl text-xs font-black transition-all duration-300 shadow-md ${
+          className={`flex items-center space-x-2 px-4 py-2 rounded-2xl text-xs font-black transition-all duration-300 shadow-sm ${
             isNudging
-              ? 'animate-nudge bg-amber-500 text-stone-950 scale-105'
-              : 'bg-gradient-to-r from-amber-600/30 to-amber-500/20 hover:from-amber-600/50 hover:to-amber-500/40 text-amber-300 border border-amber-500/40 shadow-amber-950/40'
+              ? 'animate-nudge bg-amber-500 text-white scale-105 shadow-md shadow-amber-500/25'
+              : 'bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-900 border border-amber-200/80 active:scale-95'
           }`}
         >
           <span className="text-sm">🔔</span>
@@ -163,12 +163,12 @@ export const PostCard: React.FC<PostCardProps> = ({
 
       {/* Expandable Comments Drawer */}
       {showComments && (
-        <div className="pt-3 border-t border-white/5 space-y-3 animate-fade-in">
+        <div className="pt-3 border-t border-[#EFEAE2] space-y-3 animate-fade-in">
           <div className="space-y-2">
             {comments.map((c) => (
-              <div key={c.id} className="p-3 rounded-2xl bg-[#1A1614] border border-white/5 text-xs">
-                <span className="font-bold text-amber-400 mr-2">{c.username}:</span>
-                <span className="text-[#F5EBE1]">{c.text}</span>
+              <div key={c.id} className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EFEAE2] text-xs">
+                <span className="font-bold text-amber-800 mr-2">{c.username}:</span>
+                <span className="text-[#382D25]">{c.text}</span>
               </div>
             ))}
           </div>
@@ -179,11 +179,11 @@ export const PostCard: React.FC<PostCardProps> = ({
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Gửi lời động viên bạn bè..."
-              className="flex-1 px-4 py-2.5 rounded-2xl bg-[#1A1614] border border-amber-900/30 text-xs text-[#F5EBE1] placeholder-[#A8998C]/50 focus:outline-none focus:border-amber-500"
+              className="flex-1 px-4 py-2.5 rounded-2xl bg-[#FAF8F5] border border-[#E5DCCE] text-xs text-[#2C221E] placeholder-[#918072]/60 focus:outline-none focus:bg-white focus:border-amber-500"
             />
             <button
               type="submit"
-              className="px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs"
+              className="px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition-colors"
             >
               Gửi
             </button>

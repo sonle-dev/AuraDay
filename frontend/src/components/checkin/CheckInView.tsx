@@ -19,7 +19,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
+    let timer: any = null;
     if (isRunning) {
       timer = setInterval(() => {
         setStudySeconds((prev) => prev + 1);
@@ -69,13 +69,13 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-black text-[#F5EBE1] tracking-tight">Check-in Kỷ Luật Hôm Nay</h2>
-        <p className="text-sm text-[#A8998C]">Theo dõi dinh dưỡng, chống ăn vặt và thời gian tập trung học tập</p>
+        <h2 className="text-2xl font-black text-[#2C221E] tracking-tight">Check-in Kỷ Luật Hôm Nay</h2>
+        <p className="text-sm text-[#736357]">Theo dõi dinh dưỡng, chống ăn vặt và thời gian tập trung học tập</p>
       </div>
 
       {/* 1. Ăn Uống Đúng Giờ */}
-      <div className="p-6 rounded-3xl bg-[#26211E]/80 backdrop-blur-xl border border-amber-900/30">
-        <label className="text-sm font-bold text-amber-300 uppercase tracking-wider block mb-3">
+      <div className="p-6 rounded-3xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5">
+        <label className="text-xs font-bold text-amber-800 uppercase tracking-wider block mb-3">
           1. Trạng Thái Dinh Dưỡng Bữa Chính
         </label>
         <div className="grid grid-cols-3 gap-3">
@@ -88,15 +88,15 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
                 onClick={() => setMealStatus(opt.id)}
                 className={`flex flex-col items-center p-4 rounded-2xl border transition-all duration-200 text-center ${
                   isSelected
-                    ? 'bg-gradient-to-b from-amber-600/30 to-amber-700/10 border-amber-500 shadow-lg shadow-amber-950/50 scale-[1.02]'
-                    : 'bg-[#1F1916] border-white/5 hover:border-amber-600/30 hover:bg-[#2A221D]'
+                    ? 'bg-gradient-to-b from-[#FFF5EB] to-[#FEF3C7]/40 border-amber-400 text-amber-950 shadow-md shadow-amber-500/10 scale-[1.02]'
+                    : 'bg-[#FAF8F5] border-[#EFEAE2] hover:border-amber-300 hover:bg-white text-[#5D4F45]'
                 }`}
               >
                 <span className="text-3xl mb-2">{opt.icon}</span>
-                <span className={`text-sm font-bold ${isSelected ? 'text-amber-300' : 'text-[#F5EBE1]'}`}>
+                <span className={`text-sm font-bold ${isSelected ? 'text-amber-900' : 'text-[#2C221E]'}`}>
                   {opt.label}
                 </span>
-                <span className="text-[11px] text-[#A8998C] mt-1">{opt.desc}</span>
+                <span className="text-[11px] text-[#918072] mt-1">{opt.desc}</span>
               </button>
             );
           })}
@@ -104,13 +104,13 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
       </div>
 
       {/* 2. Thói Quen Ăn Vặt */}
-      <div className="p-6 rounded-3xl bg-[#26211E]/80 backdrop-blur-xl border border-amber-900/30 flex items-center justify-between">
+      <div className="p-6 rounded-3xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 flex items-center justify-between">
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xl">🧋</span>
-            <span className="text-sm font-bold text-[#F5EBE1]">Hôm nay bạn có ăn vặt khuya không?</span>
+            <span className="text-sm font-bold text-[#2C221E]">Hôm nay bạn có ăn vặt khuya không?</span>
           </div>
-          <p className="text-xs text-[#A8998C] mt-1">Tránh trà sữa, bánh ngọt khuya để duy trì tinh thần tỉnh táo</p>
+          <p className="text-xs text-[#918072] mt-1">Tránh trà sữa, bánh ngọt khuya để duy trì tinh thần tỉnh táo</p>
         </div>
 
         <button
@@ -118,8 +118,8 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
           onClick={() => setHadSnacks(!hadSnacks)}
           className={`px-5 py-2.5 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all duration-200 border ${
             hadSnacks
-              ? 'bg-rose-950/40 border-rose-500/50 text-rose-300 shadow-md shadow-rose-950/30'
-              : 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300 shadow-md shadow-emerald-950/30'
+              ? 'bg-rose-50 border-rose-200 text-rose-700 shadow-sm'
+              : 'bg-emerald-50 border-emerald-200 text-emerald-800 shadow-sm'
           }`}
         >
           {hadSnacks ? '❌ Có Ăn Vặt' : '✅ Không Ăn Vặt'}
@@ -127,19 +127,19 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
       </div>
 
       {/* 3. Focus Study Timer (>= 15 phút) */}
-      <div className="p-6 rounded-3xl bg-[#26211E]/80 backdrop-blur-xl border border-amber-900/30">
+      <div className="p-6 rounded-3xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <label className="text-sm font-bold text-amber-300 uppercase tracking-wider block">
+            <label className="text-xs font-bold text-amber-800 uppercase tracking-wider block">
               2. Đồng Hồ Tập Trung Học Tập (Focus Timer)
             </label>
-            <span className="text-xs text-[#A8998C]">Tối thiểu 15 phút để được ghi nhận vào nhật ký</span>
+            <span className="text-xs text-[#918072]">Tối thiểu 15 phút để được ghi nhận vào nhật ký</span>
           </div>
 
           <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
             isEligible
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-              : 'bg-red-500/20 text-red-300 border-red-500/30'
+              ? 'bg-amber-100 text-amber-900 border-amber-300'
+              : 'bg-rose-100 text-rose-800 border-rose-200'
           }`}>
             {isEligible ? 'Đạt chuẩn >= 15p' : 'Chưa đủ 15p'}
           </span>
@@ -150,7 +150,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
           <div className="relative w-52 h-52 flex items-center justify-center">
             {/* Ambient Background Glow */}
             <div className={`absolute inset-0 rounded-full blur-2xl transition-all duration-700 ${
-              isRunning ? 'bg-amber-600/30 animate-pulse' : 'bg-amber-600/10'
+              isRunning ? 'bg-amber-400/25 animate-pulse' : 'bg-amber-400/10'
             }`}></div>
 
             <svg className="w-full h-full transform -rotate-90">
@@ -160,7 +160,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
                 r="90"
                 stroke="currentColor"
                 strokeWidth="10"
-                className="text-[#1A1614]"
+                className="text-[#F5F0E8]"
                 fill="transparent"
               />
               <circle
@@ -179,10 +179,10 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
 
             {/* Time Counter */}
             <div className="absolute flex flex-col items-center">
-              <span className="text-4xl font-black tracking-tight text-[#F5EBE1]">
+              <span className="text-4xl font-black tracking-tight text-[#2C221E]">
                 {String(studyMinutes).padStart(2, '0')}:{String(remainingSeconds).padStart(2, '0')}
               </span>
-              <span className="text-xs text-amber-400/80 font-semibold uppercase tracking-widest mt-1">
+              <span className="text-xs text-amber-800 font-bold uppercase tracking-widest mt-1">
                 {studyMinutes} Phút Tự Học
               </span>
             </div>
@@ -193,10 +193,10 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
             <button
               type="button"
               onClick={() => setIsRunning(!isRunning)}
-              className={`px-8 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 shadow-xl ${
+              className={`px-8 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 shadow-md ${
                 isRunning
-                  ? 'bg-amber-700/80 hover:bg-amber-700 text-[#F5EBE1] border border-amber-500/40'
-                  : 'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-black shadow-amber-600/30 scale-105'
+                  ? 'bg-amber-650 bg-amber-600 hover:bg-amber-700 text-white'
+                  : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black shadow-amber-500/25 scale-105'
               }`}
             >
               {isRunning ? '⏸ Tạm Dừng' : '▶ Bắt Đầu Học'}
@@ -205,21 +205,21 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
             <button
               type="button"
               onClick={() => { setIsRunning(false); setStudySeconds(15 * 60); }}
-              className="px-4 py-3.5 rounded-2xl bg-[#1A1614] hover:bg-[#2D2622] text-[#A8998C] hover:text-[#F5EBE1] text-xs font-semibold border border-white/5"
+              className="px-4 py-3.5 rounded-2xl bg-[#F5F0E8] hover:bg-[#EFEAE2] text-[#5D4F45] hover:text-[#2C221E] text-xs font-semibold border border-[#EFEAE2]"
             >
               Đặt Lại 15p
             </button>
           </div>
 
           {/* Quick presets */}
-          <div className="flex items-center space-x-2 mt-4 text-xs text-[#A8998C]">
+          <div className="flex items-center space-x-2 mt-4 text-xs text-[#918072]">
             <span>Cộng nhanh:</span>
             {[15, 30, 45].map((mins) => (
               <button
                 key={mins}
                 type="button"
                 onClick={() => handleQuickAddMinutes(mins)}
-                className="px-2.5 py-1 rounded-xl bg-[#1F1916] hover:bg-amber-600/20 text-amber-300 border border-amber-900/40 transition-colors"
+                className="px-2.5 py-1 rounded-xl bg-[#FAF8F5] hover:bg-amber-100/70 text-amber-800 border border-[#EFEAE2] transition-colors font-medium"
               >
                 +{mins}p
               </button>
@@ -229,8 +229,8 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
       </div>
 
       {/* 4. Ghi Chú & Cảm Xúc */}
-      <div className="p-6 rounded-3xl bg-[#26211E]/80 backdrop-blur-xl border border-amber-900/30">
-        <label className="text-sm font-bold text-amber-300 uppercase tracking-wider block mb-2">
+      <div className="p-6 rounded-3xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5">
+        <label className="text-xs font-bold text-amber-800 uppercase tracking-wider block mb-2">
           3. Nhật Ký & Ghi Chú Kỷ Luật
         </label>
         <textarea
@@ -238,7 +238,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="Hôm nay bạn đã vượt qua sự trì hoãn như thế nào? Cảm xúc sau khi hoàn thành mục tiêu..."
-          className="w-full p-4 rounded-2xl bg-[#1A1614] border border-amber-900/30 text-[#F5EBE1] placeholder-[#A8998C]/50 focus:outline-none focus:border-amber-500 transition-colors text-sm resize-none"
+          className="w-full p-4 rounded-2xl bg-[#FAF8F5] border border-[#E5DCCE] text-[#2C221E] placeholder-[#918072]/60 focus:outline-none focus:bg-white focus:border-amber-500 transition-colors text-sm resize-none"
         ></textarea>
       </div>
 
@@ -246,7 +246,7 @@ export const CheckInView: React.FC<CheckInViewProps> = ({ onCheckInSuccess }) =>
       <button
         type="button"
         onClick={handleSaveCheckIn}
-        className="w-full py-4 rounded-3xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:brightness-110 text-stone-950 font-black text-base tracking-wide shadow-xl shadow-amber-600/25 transition-all duration-200 active:scale-[0.99]"
+        className="w-full py-4 rounded-3xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 hover:brightness-105 text-white font-black text-base tracking-wide shadow-xl shadow-amber-500/25 transition-all duration-200 active:scale-[0.99]"
       >
         LƯU CHECK-IN HÔM NAY 🔥
       </button>
