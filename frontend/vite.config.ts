@@ -14,6 +14,7 @@ export default defineConfig({
       '/uploads': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+        rewrite: (path) => `/api${path}`
       }
     }
   }

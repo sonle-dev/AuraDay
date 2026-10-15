@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # 1. Cơ sở dữ liệu PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: auraday-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-auraday_db}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-AuraDay@2026Secret}
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-auraday_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auraday-network
+
+  # 2. Ứng dụng Backend Spring Boot
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auraday-backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-auraday_db}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-AuraDay@2026Secret}
+      JWT_SECRET: ${JWT_SECRET:-404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970357336763979244226452948404D6351}
+      PORT: 8080
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      # Map thư mục ảnh uploads trực tiếp ra ổ cứng thật của EC2 để không bao giờ mất
+      - ./uploads:/app/uploads
+    networks:
+      - auraday-network
+
+  # 3. Giao diện Frontend React + Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: auraday-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      # Nginx đọc trực tiếp thư mục uploads để tối ưu tốc độ load ảnh người dùng
+      - ./uploads:/var/www/uploads:ro
+    networks:
+      - auraday-network
+
+volumes:
+  # Volume lưu trữ cơ sở dữ liệu PostgreSQL an toàn trên EC2 EBS
+  postgres_data:
+    driver: local
+
+networks:
+  auraday-network:
+    driver: bridge
