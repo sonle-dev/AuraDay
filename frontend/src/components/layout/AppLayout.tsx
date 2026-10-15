@@ -62,13 +62,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       <aside className="hidden md:flex flex-col w-72 bg-[#221C18]/90 backdrop-blur-xl border-r border-amber-900/25 p-6 justify-between sticky top-0 h-screen z-30">
         <div>
           {/* Logo Brand */}
-          <div className="flex items-center space-x-3 mb-8 cursor-pointer" onClick={() => onTabChange('feed')}>
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-300 flex items-center justify-center shadow-lg shadow-amber-600/30">
-              <span className="text-xl font-black text-stone-950 tracking-tighter">A</span>
+          <div className="flex items-center space-x-3 mb-8 cursor-pointer group" onClick={() => onTabChange('feed')}>
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#2A221D] to-[#1A1614] border border-amber-500/30 p-1 flex items-center justify-center shadow-lg shadow-amber-950/50 group-hover:border-amber-400 transition-all">
+              <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 2px 4px rgba(217, 119, 6, 0.4))" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">
-                AuraRoutine
+                AuraDay
               </h1>
               <p className="text-xs text-amber-200/60 font-medium">Kỷ Luật & Bạn Bè</p>
             </div>
@@ -128,10 +128,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Mobile Header Bar */}
         <header className="md:hidden flex items-center justify-between p-4 bg-[#221C18]/90 backdrop-blur-md border-b border-amber-900/25 sticky top-0 z-20">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-bold text-stone-950 text-sm">
-              A
+            <div className="w-9 h-9 rounded-xl bg-[#2A221D] border border-amber-500/30 p-1 flex items-center justify-center shadow-md">
+              <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 1px 3px rgba(217, 119, 6, 0.4))" />
             </div>
-            <span className="font-bold text-amber-300 tracking-tight">AuraRoutine</span>
+            <span className="font-bold text-amber-300 tracking-tight">AuraDay</span>
           </div>
 
           <div className="flex items-center space-x-2 bg-[#2A221D] px-3 py-1 rounded-full border border-amber-600/25 text-xs text-amber-300 font-semibold">
