@@ -127,7 +127,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           onClick={() => onTabChange('profile')}
           className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFEAE2] flex items-center space-x-3 shadow-sm cursor-pointer hover:border-amber-400 group transition-all"
         >
-          <img src={avatarUrl} alt={username} className="w-10 h-10 rounded-full object-cover border-2 border-amber-300 group-hover:scale-105 transition-transform" />
+          <img src={avatarUrl} alt={username} className="w-10 h-10 aspect-square rounded-2xl object-cover border-2 border-amber-300 group-hover:scale-105 transition-transform shadow-sm" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold truncate text-[#2C221E] group-hover:text-amber-800">{username}</p>
             <p className="text-xs text-amber-700 font-medium">Hồ Sơ & Cài Đặt ⚙️</p>
@@ -155,7 +155,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               src={avatarUrl} 
               alt={username} 
               onClick={() => onTabChange('profile')} 
-              className="w-8 h-8 rounded-full object-cover border border-amber-300 cursor-pointer" 
+              className="w-8 h-8 aspect-square rounded-xl object-cover border border-amber-300 cursor-pointer shadow-sm" 
             />
           </div>
         </header>

@@ -21,7 +21,6 @@ public class UpdateProfileRequest {
     @Size(max = 255, message = "Bio tối đa 255 ký tự")
     private String bio;
 
-    @Size(max = 500, message = "Avatar URL tối đa 500 ký tự")
     private String avatarUrl;
 
     private PrivacyMode defaultPrivacyMode;

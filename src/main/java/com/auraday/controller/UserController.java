@@ -9,8 +9,10 @@ import com.auraday.security.SecurityUtils;
 import com.auraday.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -33,6 +35,15 @@ public class UserController {
         Long currentUserId = SecurityUtils.getCurrentUserId();
         UserProfileResponse updatedProfile = userService.updateProfile(currentUserId, request);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật hồ sơ cá nhân thành công", updatedProfile));
+    }
+
+    @PostMapping(value = "/me/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<UserProfileResponse>> uploadAvatar(
+            @RequestParam("file") MultipartFile file
+    ) {
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        UserProfileResponse updated = userService.uploadAvatar(currentUserId, file);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật ảnh đại diện thành công", updated));
     }
 
     @PutMapping("/me/password")

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PrivacyMode } from '../../types';
+import { AvatarModal } from './AvatarModal';
 
 interface ProfileSettingsViewProps {
   initialUsername?: string;
@@ -26,6 +27,7 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
   const [bio, setBio] = useState<string>(initialBio);
   const [avatarUrl, setAvatarUrl] = useState<string>(initialAvatarUrl);
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState<boolean>(false);
   const [editUsername, setEditUsername] = useState<string>(username);
   const [editBio, setEditBio] = useState<string>(bio);
   const [editAvatarUrl, setEditAvatarUrl] = useState<string>(avatarUrl);
@@ -66,6 +68,19 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
         username: editUsername.trim(),
         bio: editBio.trim(),
         avatarUrl: editAvatarUrl.trim()
+      });
+    }
+  };
+
+  const handleAvatarSelected = (newUrl: string) => {
+    setAvatarUrl(newUrl);
+    setEditAvatarUrl(newUrl);
+    showToast('✨ Đã cập nhật ảnh đại diện mới thành công!');
+    if (onProfileUpdated) {
+      onProfileUpdated({
+        username,
+        bio,
+        avatarUrl: newUrl
       });
     }
   };
@@ -156,27 +171,44 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
         <div className="space-y-6">
           {/* Profile Card */}
           <div className="p-6 rounded-3xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 flex flex-col md:flex-row items-center md:items-start gap-6">
-            <div className="relative group">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover border-4 border-amber-300 shadow-md shadow-amber-500/10"
-              />
+            <div className="flex flex-col items-center gap-2 shrink-0">
+              <div
+                onClick={() => setIsAvatarModalOpen(true)}
+                className="relative group cursor-pointer"
+                title="Bấm để đổi ảnh đại diện (Chụp ảnh hoặc Tải ảnh từ máy)"
+              >
+                <img
+                  src={avatarUrl}
+                  alt={username}
+                  className="w-24 h-24 md:w-28 md:h-28 aspect-square rounded-3xl object-cover border-4 border-amber-300 shadow-md shadow-amber-500/10 group-hover:scale-105 transition-all"
+                />
+                <div className="absolute inset-0 rounded-3xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[11px] font-bold">
+                  <span className="text-base">📸</span>
+                  <span>Đổi ảnh</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsAvatarModalOpen(true);
+                  }}
+                  className="absolute -bottom-1 -right-1 p-2 rounded-2xl bg-amber-500 text-white shadow-md hover:bg-amber-600 transition-colors border-2 border-white"
+                  title="Chụp ảnh hoặc tải ảnh lên"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Quick action buttons */}
               <button
                 type="button"
-                onClick={() => {
-                  setEditUsername(username);
-                  setEditBio(bio);
-                  setEditAvatarUrl(avatarUrl);
-                  setIsEditingProfile(true);
-                }}
-                className="absolute bottom-0 right-0 p-2 rounded-full bg-amber-500 text-white shadow-md hover:bg-amber-600 transition-colors"
-                title="Đổi ảnh đại diện"
+                onClick={() => setIsAvatarModalOpen(true)}
+                className="px-3 py-1 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-900 text-[11px] font-bold transition-all flex items-center gap-1 shadow-sm"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+                <span>📸 Đổi Avatar</span>
               </button>
             </div>
 
@@ -255,28 +287,48 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
 
                 <div>
                   <label className="text-xs font-bold text-amber-800 uppercase tracking-wider block mb-1">
-                    Link Ảnh Đại Diện (Avatar URL)
+                    Ảnh Đại Diện (Avatar)
                   </label>
-                  <input
-                    type="text"
-                    value={editAvatarUrl}
-                    onChange={(e) => setEditAvatarUrl(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF8F5] border border-[#E5DCCE] text-xs text-[#2C221E] focus:bg-white focus:border-amber-500 focus:outline-none"
-                    placeholder="https://images.unsplash.com/..."
-                  />
-                  <div className="flex items-center space-x-2 mt-2">
-                    <span className="text-[11px] text-[#918072]">Avatar gợi ý:</span>
-                    {avatarPresets.map((preset, idx) => (
-                      <img
-                        key={idx}
-                        src={preset}
-                        alt="preset"
-                        onClick={() => setEditAvatarUrl(preset)}
-                        className={`w-7 h-7 rounded-full cursor-pointer object-cover border-2 transition-all ${
-                          editAvatarUrl === preset ? 'border-amber-500 scale-110' : 'border-[#EFEAE2] hover:border-amber-300'
-                        }`}
-                      />
-                    ))}
+                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#FAF8F5] border border-[#E5DCCE]">
+                    <img
+                      src={editAvatarUrl}
+                      alt="Avatar edit preview"
+                      className="w-14 h-14 aspect-square rounded-2xl object-cover border-2 border-amber-300 shadow-sm shrink-0"
+                    />
+                    <div className="flex-1 space-y-1">
+                      <p className="text-xs font-bold text-[#2C221E]">Hình vuông 1:1 bo viền mềm</p>
+                      <button
+                        type="button"
+                        onClick={() => setIsAvatarModalOpen(true)}
+                        className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
+                      >
+                        <span>📸 Chụp Camera hoặc Tải Ảnh Máy</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 space-y-1.5">
+                    <span className="text-[11px] text-[#918072] block">Hoặc dán link ảnh / chọn ảnh mẫu:</span>
+                    <input
+                      type="text"
+                      value={editAvatarUrl}
+                      onChange={(e) => setEditAvatarUrl(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-[#FAF8F5] border border-[#E5DCCE] text-xs text-[#2C221E] focus:bg-white focus:border-amber-500 focus:outline-none"
+                      placeholder="https://..."
+                    />
+                    <div className="flex items-center space-x-2 pt-1">
+                      {avatarPresets.map((preset, idx) => (
+                        <img
+                          key={idx}
+                          src={preset}
+                          alt="preset"
+                          onClick={() => setEditAvatarUrl(preset)}
+                          className={`w-7 h-7 aspect-square rounded-xl cursor-pointer object-cover border-2 transition-all ${
+                            editAvatarUrl === preset ? 'border-amber-500 scale-110 shadow-sm' : 'border-[#EFEAE2] hover:border-amber-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -548,6 +600,14 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Avatar Modal (Direct Camera Capture & File Upload) */}
+      <AvatarModal
+        isOpen={isAvatarModalOpen}
+        currentAvatarUrl={avatarUrl}
+        onClose={() => setIsAvatarModalOpen(false)}
+        onAvatarSelected={handleAvatarSelected}
+      />
     </div>
   );
 };

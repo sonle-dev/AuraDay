@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +30,7 @@ public class UserService {
     private final FriendshipRepository friendshipRepository;
     private final DailyLogRepository dailyLogRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileStorageService fileStorageService;
 
     @Transactional(readOnly = true)
     public UserProfileResponse getCurrentUserProfile(Long currentUserId) {
@@ -67,6 +69,17 @@ public class UserService {
 
         User updatedUser = userRepository.save(user);
         return UserProfileResponse.fromEntity(updatedUser);
+    }
+
+    @Transactional
+    public UserProfileResponse uploadAvatar(Long currentUserId, MultipartFile file) {
+        User user = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUserId));
+
+        String avatarUrl = fileStorageService.storeAvatarImage(file);
+        user.setAvatarUrl(avatarUrl);
+        User updated = userRepository.save(user);
+        return UserProfileResponse.fromEntity(updated);
     }
 
     @Transactional

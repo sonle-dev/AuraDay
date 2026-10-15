@@ -30,8 +30,10 @@ public class FileStorageService {
     public void init() {
         try {
             Path proofDirPath = Paths.get(uploadBaseDir, "proofs").toAbsolutePath().normalize();
+            Path avatarDirPath = Paths.get(uploadBaseDir, "avatars").toAbsolutePath().normalize();
             Files.createDirectories(proofDirPath);
-            log.info("Thư mục lưu trữ ảnh minh chứng đã khởi tạo tại: {}", proofDirPath);
+            Files.createDirectories(avatarDirPath);
+            log.info("Thư mục lưu trữ ảnh minh chứng và avatar đã khởi tạo tại: {} & {}", proofDirPath, avatarDirPath);
         } catch (IOException e) {
             log.error("Không thể khởi tạo thư mục upload: {}", e.getMessage());
             throw new RuntimeException("Không thể tạo thư mục lưu trữ file upload", e);
@@ -62,11 +64,41 @@ public class FileStorageService {
 
         try (InputStream inputStream = file.getInputStream()) {
             Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            // URL tương đối phục vụ qua static resource handler
             return "/uploads/proofs/" + uniqueFileName;
         } catch (IOException ex) {
             log.error("Lỗi khi lưu trữ file {}: {}", originalFilename, ex.getMessage());
             throw new RuntimeException("Lỗi hệ thống khi lưu trữ file ảnh: " + originalFilename, ex);
+        }
+    }
+
+    public String storeAvatarImage(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new BadRequestException("File ảnh đại diện không được để trống");
+        }
+
+        String originalFilename = StringUtils.cleanPath(
+                file.getOriginalFilename() != null ? file.getOriginalFilename() : "avatar.jpg"
+        );
+
+        String extension = "";
+        int extIndex = originalFilename.lastIndexOf('.');
+        if (extIndex >= 0) {
+            extension = originalFilename.substring(extIndex).toLowerCase();
+        }
+
+        if (!ALLOWED_IMAGE_EXTENSIONS.contains(extension)) {
+            throw new BadRequestException("Định dạng file không được hỗ trợ. Chỉ chấp nhận: " + ALLOWED_IMAGE_EXTENSIONS);
+        }
+
+        String uniqueFileName = "avatar_" + UUID.randomUUID() + extension;
+        Path targetLocation = Paths.get(uploadBaseDir, "avatars", uniqueFileName).toAbsolutePath().normalize();
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            return "/uploads/avatars/" + uniqueFileName;
+        } catch (IOException ex) {
+            log.error("Lỗi khi lưu trữ avatar {}: {}", originalFilename, ex.getMessage());
+            throw new RuntimeException("Lỗi hệ thống khi lưu trữ ảnh avatar: " + originalFilename, ex);
         }
     }
 }
