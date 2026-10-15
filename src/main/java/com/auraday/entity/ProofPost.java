@@ -41,8 +41,7 @@ public class ProofPost {
     private DailyLog dailyLog;
 
     @NotBlank(message = "Image URL minh chứng không được để trống")
-    @Size(max = 500, message = "URL hình ảnh tối đa 500 ký tự")
-    @Column(name = "image_url", nullable = false, length = 500)
+    @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
 
     @Column(name = "caption", columnDefinition = "TEXT")

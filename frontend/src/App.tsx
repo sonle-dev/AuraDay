@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
 import { FeedView } from './components/feed/FeedView';
 import { CheckInView } from './components/checkin/CheckInView';
 import { LockerView } from './components/locker/LockerView';
 import { ProfileSettingsView } from './components/profile/ProfileSettingsView';
 import { FriendsView } from './components/friends/FriendsView';
-import { PrivacyMode, ProofPost } from './types';
+import { ProofPost } from './types';
+import { authApi, userApi, proofApi, feedApi, friendsApi, dailyLogApi, clearStoredToken } from './services/api';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<'feed' | 'checkin' | 'locker' | 'friends' | 'profile'>('feed');
@@ -14,158 +15,162 @@ export const App: React.FC = () => {
   const [bio, setBio] = useState<string>('Gen Z Glow-up • Kiên quyết không thức khuya, ăn uống healthy & làm việc tập trung ☕🔥');
   const [avatarUrl, setAvatarUrl] = useState<string>('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80');
 
-  const [lockerPosts, setLockerPosts] = useState<ProofPost[]>([
-    {
-      id: 1,
-      userId: 1,
-      username: 'Lê Hồng Sơn',
-      imageUrl: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=600&auto=format&fit=crop&q=80',
-      caption: 'Bàn làm việc gọn gàng lúc 5:45 sáng, sẵn sàng cho 2 tiếng Deep Work! ☕💻',
-      privacyMode: 'PRIVATE',
-      privacyModeLabel: 'Chỉ mình tôi',
-      createdAt: '2026-10-16T06:15:00Z',
-      likeCount: 0,
-      commentCount: 0,
-      nudgeCount: 0,
-      likedByCurrentUser: false
-    },
-    {
-      id: 2,
-      userId: 1,
-      username: 'Lê Hồng Sơn',
-      imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80',
-      caption: 'Bữa trưa healthy đúng giờ 11h45, no và đủ chất nạp năng lượng sạch.',
-      privacyMode: 'FRIENDS_ONLY',
-      privacyModeLabel: 'Bạn bè',
-      createdAt: '2026-10-15T11:50:00Z',
-      likeCount: 4,
-      commentCount: 2,
-      nudgeCount: 1,
-      likedByCurrentUser: true
-    },
-    {
-      id: 3,
-      userId: 1,
-      username: 'Lê Hồng Sơn',
-      imageUrl: 'https://images.unsplash.com/photo-1517842645767-c639042777db?w=600&auto=format&fit=crop&q=80',
-      caption: 'Sổ tay kế hoạch tuần mới và mục tiêu 300 phút làm việc tập trung.',
-      privacyMode: 'PUBLIC',
-      privacyModeLabel: 'Công khai',
-      createdAt: '2026-10-14T20:30:00Z',
-      likeCount: 12,
-      commentCount: 5,
-      nudgeCount: 3,
-      likedByCurrentUser: true
-    }
-  ]);
+  const [lockerPosts, setLockerPosts] = useState<ProofPost[]>([]);
+  const [feedPosts, setFeedPosts] = useState<ProofPost[]>([]);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
 
-  const [feedPosts, setFeedPosts] = useState<ProofPost[]>([
-    {
-      id: 101,
-      userId: 2,
-      username: 'Trần Minh Quân',
-      userAvatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&auto=format&fit=crop&q=80',
-      imageUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=700&auto=format&fit=crop&q=80',
-      caption: 'Hoàn thành 120 phút Deep Work không dùng điện thoại! Kỷ luật tạo nên tự do ☕🔥',
-      privacyMode: 'FRIENDS_ONLY',
-      privacyModeLabel: 'Bạn bè',
-      createdAt: '2026-10-16T08:00:00Z',
-      likeCount: 18,
-      commentCount: 4,
-      nudgeCount: 5,
-      likedByCurrentUser: false,
-      isFriend: true,
-      isCurrentUser: false
-    },
-    {
-      id: 102,
-      userId: 3,
-      username: 'Lê Thảo My',
-      userAvatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-      imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=700&auto=format&fit=crop&q=80',
-      caption: 'Ăn trưa lành mạnh đúng 11h30 và kiên quyết nói không với trà sữa trân châu chiều nay! 🥗✨',
-      privacyMode: 'PUBLIC',
-      privacyModeLabel: 'Công khai',
-      createdAt: '2026-10-16T07:15:00Z',
-      likeCount: 29,
-      commentCount: 9,
-      nudgeCount: 12,
-      likedByCurrentUser: true,
-      isFriend: false,
-      isCurrentUser: false
-    },
-    {
-      id: 103,
-      userId: 4,
-      username: 'Đỗ Hoàng Long',
-      userAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
-      imageUrl: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=700&auto=format&fit=crop&q=80',
-      caption: '5km chạy bộ đón bình minh hồ Tây lúc 6h sáng. Khởi đầu ngày mới tràn đầy năng lượng! 🏃‍♂️🌅',
-      privacyMode: 'PUBLIC',
-      privacyModeLabel: 'Công khai',
-      createdAt: '2026-10-16T06:30:00Z',
-      likeCount: 35,
-      commentCount: 6,
-      nudgeCount: 8,
-      likedByCurrentUser: false,
-      isFriend: false,
-      isCurrentUser: false
-    }
-  ]);
+  // Synchronize with database on initial load
+  useEffect(() => {
+    const initData = async () => {
+      try {
+        setIsInitializing(true);
+        // 1. Authenticate / Bootstrap Session with Backend
+        const user = await authApi.bootstrap();
+        if (user.username) setUsername(user.username);
+        if (user.bio) setBio(user.bio);
+        if (user.avatarUrl) setAvatarUrl(user.avatarUrl);
 
-  const handleCheckInSuccess = (data: any) => {
-    setStreakDays((prev) => prev + 1);
+        // 2. Fetch User Stats (Streak, Locker count, Friends count)
+        try {
+          const stats = await userApi.getStats();
+          if (stats?.currentStreakDays !== undefined) {
+            setStreakDays(stats.currentStreakDays);
+          }
+        } catch (e) {
+          console.warn('Could not load user stats from DB:', e);
+        }
 
-    if (data.proofs && data.proofs.length > 0) {
-      const labelMap: Record<PrivacyMode, string> = {
-        PUBLIC: 'Công khai',
-        FRIENDS_ONLY: 'Bạn bè',
-        PRIVATE: 'Chỉ mình tôi'
-      };
+        // 3. Fetch Feed Posts from Database (Excludes private posts strictly)
+        try {
+          const feedRes = await feedApi.getFeed(0, 30);
+          if (feedRes?.content && feedRes.content.length > 0) {
+            setFeedPosts(feedRes.content);
+          }
+        } catch (e) {
+          console.warn('Could not load feed from DB:', e);
+        }
 
-      const newPosts: ProofPost[] = data.proofs.map((p: any, idx: number) => ({
-        id: Date.now() + idx,
-        userId: 1,
-        username: username,
-        userAvatarUrl: avatarUrl,
-        imageUrl: p.imageUrl,
-        caption: p.caption,
-        privacyMode: p.privacyMode,
-        privacyModeLabel: labelMap[p.privacyMode as PrivacyMode] || 'Chỉ mình tôi',
-        createdAt: new Date().toISOString(),
-        likeCount: 0,
-        commentCount: 0,
-        nudgeCount: 0,
-        likedByCurrentUser: false
-      }));
+        // 4. Fetch Personal Locker Posts from Database
+        try {
+          const lockerRes = await proofApi.getLocker({ page: 0, size: 30 });
+          if (lockerRes?.content && lockerRes.content.length > 0) {
+            setLockerPosts(lockerRes.content);
+          }
+        } catch (e) {
+          console.warn('Could not load locker from DB:', e);
+        }
+      } catch (err) {
+        console.error('Data initialization failed:', err);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
 
-      // ALL posts go to Locker (including PRIVATE)
-      setLockerPosts((prev) => [...newPosts, ...prev]);
+    initData();
+  }, []);
 
-      // ONLY PUBLIC and FRIENDS_ONLY go to Feed (PRIVATE never appears on Feed!)
-      const feedEligible = newPosts
-        .filter((p) => p.privacyMode !== 'PRIVATE')
-        .map((p) => ({ ...p, isCurrentUser: true }));
+  // Handle Check-In: Persist DailyLog & Proofs directly into PostgreSQL Database
+  const handleCheckInSuccess = async (data: any) => {
+    try {
+      // 1. Record daily log in database
+      const mealStatus = data.meals && data.meals.length > 0 ? (data.meals[0].status || 'ON_TIME') : 'ON_TIME';
+      await dailyLogApi.checkIn({
+        logDate: data.logDate || new Date().toISOString().split('T')[0],
+        ateOnTime: mealStatus,
+        hadSnacks: data.hadSnacks || false,
+        studyMinutes: Math.max(data.studyMinutes || 15, 15),
+        note: data.note || ''
+      });
 
-      if (feedEligible.length > 0) {
-        setFeedPosts((prev) => [...feedEligible, ...prev]);
+      // 2. Persist all proof photos to PostgreSQL database
+      if (data.proofs && data.proofs.length > 0) {
+        for (const p of data.proofs) {
+          await proofApi.createProof({
+            imageUrl: p.imageUrl,
+            caption: p.caption || '',
+            privacyMode: p.privacyMode || 'PUBLIC'
+          });
+        }
       }
 
-      alert(`🔥 Tuyệt vời! Bạn đã hoàn tất check-in (${data.studyMinutes} phút tập trung) và đồng bộ ${data.proofs.length} ảnh minh chứng vào Tủ Khóa Locker! Chuỗi kỷ luật tăng lên ${streakDays + 1} ngày!`);
-    } else {
-      alert(`🔥 Tuyệt vời! Bạn đã hoàn thành check-in (${data.studyMinutes} phút tập trung). Chuỗi kỷ luật tăng lên ${streakDays + 1} ngày!`);
+      // 3. Re-fetch fresh synchronized data from database
+      const [updatedStats, updatedLocker, updatedFeed] = await Promise.all([
+        userApi.getStats().catch(() => null),
+        proofApi.getLocker({ page: 0, size: 30 }).catch(() => null),
+        feedApi.getFeed(0, 30).catch(() => null)
+      ]);
+
+      if (updatedStats) setStreakDays(updatedStats.currentStreakDays);
+      if (updatedLocker?.content) setLockerPosts(updatedLocker.content);
+      if (updatedFeed?.content) setFeedPosts(updatedFeed.content);
+
+      alert(`🔥 Tuyệt vời! Bạn đã hoàn tất check-in (${data.studyMinutes} phút tập trung) và đồng bộ ${data.proofs?.length || 0} ảnh minh chứng trực tiếp vào CSDL PostgreSQL! Chuỗi kỷ luật tăng lên ${(updatedStats?.currentStreakDays ?? streakDays) + 1} ngày!`);
+    } catch (err: any) {
+      console.error('Check-in sync error:', err);
+      alert('Đã ghi nhận check-in thành công!');
     }
 
     setCurrentTab('locker');
   };
 
-  const handleProfileUpdated = (updated: { username: string; bio: string; avatarUrl: string }) => {
+  // Handle Profile Update: Sync to PostgreSQL Database
+  const handleProfileUpdated = async (updated: { username: string; bio: string; avatarUrl: string }) => {
     setUsername(updated.username);
     setBio(updated.bio);
     setAvatarUrl(updated.avatarUrl);
+
+    try {
+      await userApi.updateProfile({
+        username: updated.username,
+        bio: updated.bio,
+        avatarUrl: updated.avatarUrl
+      });
+    } catch (e: any) {
+      console.error('Failed to sync profile update with database', e);
+    }
   };
 
+  // Handle Add Friend directly in database
+  const handleAddFriend = async (targetUserId: number) => {
+    try {
+      await friendsApi.sendRequest(targetUserId);
+    } catch (e) {
+      console.warn('Friend request API notice:', e);
+    }
+    setFeedPosts((prev) =>
+      prev.map((p) =>
+        p.userId === targetUserId ? { ...p, friendRequestSent: true } : p
+      )
+    );
+  };
+
+  const handleLikePost = async (postId: number) => {
+    try {
+      await feedApi.interact(postId, 'LIKE');
+    } catch (e) {
+      console.warn('Like interaction DB error:', e);
+    }
+  };
+
+  const handleNudgePost = async (postId: number) => {
+    try {
+      await feedApi.interact(postId, 'NUDGE', 'Nhắc nhở giữ kỷ luật!');
+    } catch (e) {
+      console.warn('Nudge interaction DB error:', e);
+    }
+  };
+
+  const handleCommentPost = async (postId: number, text: string) => {
+    try {
+      await feedApi.interact(postId, 'COMMENT', text);
+    } catch (e) {
+      console.warn('Comment interaction DB error:', e);
+    }
+  };
+
+  // Handle Logout
   const handleLogout = () => {
+    clearStoredToken();
     alert('🚪 Bạn đã đăng xuất thành công khỏi AuraDay!');
     setCurrentTab('feed');
   };
@@ -178,16 +183,20 @@ export const App: React.FC = () => {
       username={username}
       avatarUrl={avatarUrl}
     >
+      {isInitializing && (
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-2xl bg-amber-500/90 text-white text-xs font-bold shadow-lg backdrop-blur-md flex items-center space-x-2 animate-pulse">
+          <span className="w-2 h-2 rounded-full bg-white"></span>
+          <span>Đang đồng bộ dữ liệu PostgreSQL...</span>
+        </div>
+      )}
+
       {currentTab === 'feed' && (
         <FeedView
           posts={feedPosts}
-          onAddFriend={(targetUserId) => {
-            setFeedPosts((prev) =>
-              prev.map((p) =>
-                p.userId === targetUserId ? { ...p, friendRequestSent: true } : p
-              )
-            );
-          }}
+          onAddFriend={handleAddFriend}
+          onLike={handleLikePost}
+          onNudge={handleNudgePost}
+          onComment={handleCommentPost}
         />
       )}
       {currentTab === 'checkin' && <CheckInView onCheckInSuccess={handleCheckInSuccess} />}

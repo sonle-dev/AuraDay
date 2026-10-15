@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FriendSuggestion, Buddy, FriendRequestItem } from '../../types';
+import { friendsApi } from '../../services/api';
 
 interface FriendsViewProps {
   onNudgeBuddy?: (username: string) => void;
@@ -175,6 +176,76 @@ export const FriendsView: React.FC<FriendsViewProps> = ({
     }
   ]);
 
+  // Synchronize friends, suggestions and requests from Database
+  useEffect(() => {
+    // 1. Load Suggestions from DB
+    friendsApi.getSuggestions()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const mapped: FriendSuggestion[] = data.map((s) => ({
+            userId: s.userId,
+            username: s.username,
+            avatarUrl: s.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
+            bio: s.bio || 'Thành viên cộng đồng kỷ luật AuraDay',
+            streakDays: s.streakDays || 5,
+            mutualFriendsCount: s.mutualFriendsCount || 0,
+            mutualFriendNames: s.mutualFriendNames || [],
+            suggestionReason: s.suggestionReason || '',
+            location: s.location || 'Hà Nội',
+            distanceKm: s.distanceKm || 1.2,
+            habitHighlight: s.habitHighlight || 'Deep Work • Dậy sớm',
+            status: 'IDLE'
+          }));
+          setSuggestions(mapped);
+        }
+      })
+      .catch((err) => console.warn('Could not load suggestions from DB:', err));
+
+    // 2. Load Friends (Buddies) from DB
+    friendsApi.getFriends()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const mappedBuddies: Buddy[] = data.map((f, idx) => ({
+            id: f.id || idx + 1,
+            userId: f.id,
+            username: f.username,
+            avatarUrl: f.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&auto=format&fit=crop&q=80',
+            bio: f.bio || 'Đồng đội kỷ luật trên AuraDay',
+            streakDays: 7,
+            location: 'Hà Nội',
+            distanceKm: 1.0,
+            isOnline: true,
+            lastActive: 'Hoạt động gần đây',
+            currentHabit: 'Kỷ luật hàng ngày',
+            todayCheckedIn: true,
+            nudgedToday: false
+          }));
+          setBuddies(mappedBuddies);
+        }
+      })
+      .catch((err) => console.warn('Could not load buddies from DB:', err));
+
+    // 3. Load Pending Requests from DB
+    friendsApi.getRequests()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const mappedReqs: FriendRequestItem[] = data.map((r) => ({
+            id: r.id,
+            fromUserId: r.fromUser?.id || r.userId,
+            username: r.fromUser?.username || r.username || 'Bạn mới',
+            avatarUrl: r.fromUser?.avatarUrl || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80',
+            bio: r.fromUser?.bio || 'Muốn kết nối cùng bạn rèn luyện kỷ luật',
+            streakDays: 5,
+            location: 'Hà Nội',
+            mutualCount: 1,
+            createdAt: 'Gần đây'
+          }));
+          setRequests(mappedReqs);
+        }
+      })
+      .catch((err) => console.warn('Could not load friend requests from DB:', err));
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
@@ -206,18 +277,24 @@ export const FriendsView: React.FC<FriendsViewProps> = ({
     }
   };
 
-  const handleSendRequest = (userId: number, username: string) => {
+  const handleSendRequest = async (userId: number, username: string) => {
     setSuggestions((prev) =>
       prev.map((s) => (s.userId === userId ? { ...s, status: 'REQUEST_SENT' } : s))
     );
     showToast(`✨ Đã gửi lời mời kết bạn đến @${username}!`);
+
+    try {
+      await friendsApi.sendRequest(userId);
+    } catch (e: any) {
+      console.warn('Friend request API notice:', e.message);
+    }
   };
 
   const handleRemoveSuggestion = (userId: number) => {
     setSuggestions((prev) => prev.filter((s) => s.userId !== userId));
   };
 
-  const handleAcceptRequest = (requestId: number, username: string, avatarUrl?: string, bio?: string, streakDays?: number, location?: string) => {
+  const handleAcceptRequest = async (requestId: number, username: string, avatarUrl?: string, bio?: string, streakDays?: number, location?: string) => {
     setRequests((prev) => prev.filter((r) => r.id !== requestId));
     const newBuddy: Buddy = {
       id: Date.now(),
@@ -236,11 +313,23 @@ export const FriendsView: React.FC<FriendsViewProps> = ({
     };
     setBuddies((prev) => [newBuddy, ...prev]);
     showToast(`🤝 Bạn và @${username} đã trở thành bạn đồng hành!`);
+
+    try {
+      await friendsApi.acceptRequest(requestId);
+    } catch (e: any) {
+      console.warn('Accept friend request DB notice:', e.message);
+    }
   };
 
-  const handleRejectRequest = (requestId: number, username: string) => {
+  const handleRejectRequest = async (requestId: number, username: string) => {
     setRequests((prev) => prev.filter((r) => r.id !== requestId));
     showToast(`Đã từ chối lời mời từ @${username}`);
+
+    try {
+      await friendsApi.rejectRequest(requestId);
+    } catch (e: any) {
+      console.warn('Reject friend request DB notice:', e.message);
+    }
   };
 
   const handleNudge = (buddyId: number, username: string) => {

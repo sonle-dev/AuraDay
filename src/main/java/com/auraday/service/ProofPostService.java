@@ -71,6 +71,41 @@ public class ProofPostService {
         return mapToResponse(savedPost, userId);
     }
 
+    @Transactional
+    public ProofPostResponse createProofPost(Long userId, ProofPostCreateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        if (request == null || request.getImageUrl() == null || request.getImageUrl().isBlank()) {
+            throw new IllegalArgumentException("Ảnh minh chứng không được để trống");
+        }
+
+        DailyLog dailyLog = null;
+        if (request.getDailyLogId() != null) {
+            dailyLog = dailyLogRepository.findById(request.getDailyLogId())
+                    .orElseThrow(() -> new ResourceNotFoundException("DailyLog", "id", request.getDailyLogId()));
+
+            if (!dailyLog.getUser().getId().equals(userId)) {
+                throw new UnauthorizedException("DailyLog này không thuộc quyền sở hữu của bạn");
+            }
+        }
+
+        PrivacyMode mode = (request.getPrivacyMode() != null)
+                ? request.getPrivacyMode()
+                : PrivacyMode.PUBLIC;
+
+        ProofPost post = ProofPost.builder()
+                .user(user)
+                .dailyLog(dailyLog)
+                .imageUrl(request.getImageUrl())
+                .caption(request.getCaption())
+                .privacyMode(mode)
+                .build();
+
+        ProofPost savedPost = proofPostRepository.save(post);
+        return mapToResponse(savedPost, userId);
+    }
+
     @Transactional(readOnly = true)
     public Page<ProofPostResponse> getPersonalLocker(
             Long userId,

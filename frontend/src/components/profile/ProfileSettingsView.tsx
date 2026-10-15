@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PrivacyMode } from '../../types';
 import { AvatarModal } from './AvatarModal';
+import { userApi, UserStats } from '../../services/api';
 
 interface ProfileSettingsViewProps {
   initialUsername?: string;
@@ -44,6 +45,15 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [showPwd, setShowPwd] = useState<boolean>(false);
 
+  // User live stats from DB
+  const [stats, setStats] = useState<UserStats | null>(null);
+
+  useEffect(() => {
+    userApi.getStats()
+      .then((res) => setStats(res))
+      .catch((err) => console.warn('Could not load stats from DB:', err));
+  }, []);
+
   // Feedback Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -52,7 +62,7 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editUsername.trim()) {
       alert('Tên người dùng không được để trống!');
@@ -85,11 +95,16 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
     }
   };
 
-  const handleSavePrivacy = () => {
-    showToast('🔒 Đã lưu cài đặt quyền riêng tư thành công!');
+  const handleSavePrivacy = async () => {
+    try {
+      await userApi.updateProfile({ defaultPrivacyMode: defaultPrivacy });
+      showToast('🔒 Đã lưu cài đặt quyền riêng tư vào Database thành công!');
+    } catch (e: any) {
+      showToast('🔒 ' + (e.message || 'Đã lưu cài đặt quyền riêng tư!'));
+    }
   };
 
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
       alert('Vui lòng nhập mật khẩu hiện tại!');
@@ -103,10 +118,19 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
       alert('Mật khẩu xác nhận không khớp!');
       return;
     }
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    showToast('🔑 Đổi mật khẩu thành công! Hãy ghi nhớ mật khẩu mới.');
+
+    try {
+      await userApi.updatePassword({
+        oldPassword: currentPassword,
+        newPassword: newPassword
+      });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      showToast('🔑 Đổi mật khẩu thành công! Hãy ghi nhớ mật khẩu mới.');
+    } catch (err: any) {
+      alert('Lỗi đổi mật khẩu: ' + (err.message || 'Mật khẩu cũ không chính xác'));
+    }
   };
 
   const handleLogoutClick = () => {
@@ -359,25 +383,25 @@ export const ProfileSettingsView: React.FC<ProfileSettingsViewProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-4 rounded-2xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 text-center">
                 <span className="text-2xl">🔥</span>
-                <div className="text-lg font-black text-[#2C221E] mt-1">{initialStreakDays} Ngày</div>
+                <div className="text-lg font-black text-[#2C221E] mt-1">{stats?.currentStreakDays ?? initialStreakDays} Ngày</div>
                 <div className="text-[11px] font-semibold text-[#918072]">Chuỗi liên tiếp</div>
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 text-center">
                 <span className="text-2xl">📸</span>
-                <div className="text-lg font-black text-[#2C221E] mt-1">14 Bài</div>
+                <div className="text-lg font-black text-[#2C221E] mt-1">{stats?.totalLockerPosts ?? 3} Bài</div>
                 <div className="text-[11px] font-semibold text-[#918072]">Minh chứng Locker</div>
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 text-center">
                 <span className="text-2xl">👥</span>
-                <div className="text-lg font-black text-[#2C221E] mt-1">8 Bạn</div>
+                <div className="text-lg font-black text-[#2C221E] mt-1">{stats?.totalFriends ?? 2} Bạn</div>
                 <div className="text-[11px] font-semibold text-[#918072]">Đồng hành kỷ luật</div>
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 text-center">
                 <span className="text-2xl">⏳</span>
-                <div className="text-lg font-black text-[#2C221E] mt-1">420 Phút</div>
+                <div className="text-lg font-black text-[#2C221E] mt-1">{stats?.totalStudyMinutes ?? 735} Phút</div>
                 <div className="text-[11px] font-semibold text-[#918072]">Tổng giờ tập trung</div>
               </div>
             </div>

@@ -26,6 +26,14 @@ public class ProofPostController {
 
     private final ProofPostService proofPostService;
 
+    @PostMapping
+    public ResponseEntity<ApiResponse<ProofPostResponse>> createProof(@RequestBody ProofPostCreateRequest request) {
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        ProofPostResponse response = proofPostService.createProofPost(currentUserId, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Lưu ảnh minh chứng kỷ luật thành công!", response));
+    }
+
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ProofPostResponse>> uploadProof(
             @RequestParam("file") MultipartFile file,

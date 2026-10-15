@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ProofPostCreateRequest {
 
     private Long dailyLogId;
+    private String imageUrl;
     private String caption;
     @Builder.Default
     private PrivacyMode privacyMode = PrivacyMode.PUBLIC;

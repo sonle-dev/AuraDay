@@ -5,11 +5,17 @@ import { ProofPost } from '../../types';
 interface FeedViewProps {
   posts?: ProofPost[];
   onAddFriend?: (userId: number, username: string) => void;
+  onLike?: (postId: number) => void;
+  onNudge?: (postId: number) => void;
+  onComment?: (postId: number, text: string) => void;
 }
 
 export const FeedView: React.FC<FeedViewProps> = ({ 
   posts,
-  onAddFriend
+  onAddFriend,
+  onLike,
+  onNudge,
+  onComment
 }) => {
   const [filter, setFilter] = useState<'ALL' | 'FRIENDS' | 'DISCOVER'>('ALL');
 
@@ -142,6 +148,9 @@ export const FeedView: React.FC<FeedViewProps> = ({
             key={post.id} 
             post={post}
             onAddFriend={onAddFriend}
+            onLike={onLike}
+            onNudge={onNudge}
+            onComment={onComment}
           />
         ))}
 
