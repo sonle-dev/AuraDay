@@ -106,12 +106,12 @@ export const PostCard: React.FC<PostCardProps> = ({
         </p>
       )}
 
-      {/* Proof Photo Display */}
-      <div className="relative rounded-2xl overflow-hidden bg-amber-50/50 border border-[#EFEAE2] group">
+      {/* Proof Photo Display - Square 1:1 with rounded border */}
+      <div className="relative w-full max-w-[460px] aspect-square mx-auto rounded-3xl overflow-hidden bg-amber-50/50 border-2 border-[#EFEAE2] shadow-sm group">
         <img
           src={post.imageUrl}
           alt="Minh chứng"
-          className="w-full max-h-[460px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
+          className="w-full h-full aspect-square object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         />
         <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-emerald-800 border border-emerald-200/60 shadow-sm">
           ✓ Minh chứng đã xác thực

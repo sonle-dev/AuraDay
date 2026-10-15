@@ -136,9 +136,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       </aside>
 
       {/* ================= MAIN CONTENT AREA ================= */}
-      <main className="flex-1 flex flex-col min-w-0 pb-24 md:pb-8">
+      <main className="flex-1 flex flex-col min-w-0 pb-28 md:pb-10">
         {/* Mobile Header Bar */}
-        <header className="md:hidden flex items-center justify-between p-4 bg-white/90 backdrop-blur-md border-b border-[#EFEAE2] sticky top-0 z-20">
+        <header className="md:hidden flex items-center justify-between p-3.5 bg-white/90 backdrop-blur-md border-b border-[#EFEAE2] sticky top-0 z-20">
           <div className="flex items-center space-x-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFF5EB] to-[#FEF3C7] border border-amber-200 p-1 flex items-center justify-center shadow-sm">
               <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 1px 2px rgba(217, 119, 6, 0.2))" />
@@ -147,7 +147,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
 
           <div className="flex items-center space-x-2">
-            <div className="flex items-center space-x-1.5 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs text-amber-800 font-bold">
+            <div className="flex items-center space-x-1.5 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 text-xs text-amber-800 font-bold">
               <span>🔥</span>
               <span>{streakDays} ngày</span>
             </div>
@@ -160,8 +160,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         </header>
 
-        {/* Dynamic Screen View */}
-        <div className="flex-1 max-w-4xl w-full mx-auto p-4 md:p-8">
+        {/* Dynamic Screen View - Responsive fluid scaling */}
+        <div className="flex-1 w-full max-w-5xl 2xl:max-w-6xl mx-auto px-2.5 sm:px-6 md:px-8 py-3 sm:py-6">
           {children}
         </div>
       </main>

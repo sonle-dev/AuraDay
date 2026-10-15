@@ -174,20 +174,20 @@ export const LockerView: React.FC<LockerViewProps> = ({ initialPosts }) => {
         </div>
       </div>
 
-      {/* Proof Photo Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {/* Proof Photo Grid - Square 1:1 with rounded borders */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
         {filteredPosts.map((post) => (
           <div
             key={post.id}
             onClick={() => setSelectedPost(post)}
-            className="group relative rounded-3xl overflow-hidden bg-white border border-[#EFEAE2] cursor-pointer hover:border-amber-400 transition-all duration-300 hover:-translate-y-1 shadow-sm shadow-amber-950/5"
+            className="group relative aspect-square rounded-3xl overflow-hidden bg-white border border-[#EFEAE2] cursor-pointer hover:border-amber-400 transition-all duration-300 hover:-translate-y-1 shadow-sm shadow-amber-950/5"
           >
-            {/* Image Thumbnail */}
-            <div className="aspect-square w-full overflow-hidden bg-amber-50/40">
+            {/* Image Thumbnail - Square 1:1 */}
+            <div className="w-full h-full overflow-hidden bg-amber-50/40">
               <img
                 src={post.imageUrl}
                 alt={post.caption || 'Minh chứng'}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </div>
 
@@ -215,17 +215,17 @@ export const LockerView: React.FC<LockerViewProps> = ({ initialPosts }) => {
       {/* ================= MODAL XEM CHI TIẾT & ĐỔI QUYỀN RIÊNG TƯ ================= */}
       {selectedPost && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#2C221E]/40 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#2C221E]/40 backdrop-blur-sm animate-fade-in"
           onClick={() => setSelectedPost(null)}
         >
           <div
-            className="max-w-lg w-full bg-white rounded-3xl border border-[#EFEAE2] p-6 space-y-5 shadow-2xl shadow-amber-950/15"
+            className="max-w-md w-full bg-white rounded-3xl border border-[#EFEAE2] p-5 sm:p-6 space-y-4 shadow-2xl shadow-amber-950/15 max-h-[95vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-black text-[#2C221E]">Chi Tiết Minh Chứng</h3>
+                <h3 className="text-base sm:text-lg font-black text-[#2C221E]">Chi Tiết Minh Chứng</h3>
                 <span className="text-xs text-[#918072]">
                   {new Date(selectedPost.createdAt).toLocaleString('vi-VN')}
                 </span>
@@ -238,9 +238,9 @@ export const LockerView: React.FC<LockerViewProps> = ({ initialPosts }) => {
               </button>
             </div>
 
-            {/* Full Image */}
-            <div className="w-full h-64 rounded-2xl overflow-hidden bg-amber-50/40 border border-[#EFEAE2]">
-              <img src={selectedPost.imageUrl} alt="Chi tiết" className="w-full h-full object-cover" />
+            {/* Full Image - Square 1:1 with rounded borders */}
+            <div className="w-full max-w-[340px] aspect-square mx-auto rounded-3xl overflow-hidden bg-amber-50/40 border-2 border-amber-300 shadow-md">
+              <img src={selectedPost.imageUrl} alt="Chi tiết" className="w-full h-full aspect-square object-cover" />
             </div>
 
             {/* Caption */}

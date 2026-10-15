@@ -110,14 +110,20 @@ export const CameraModal: React.FC<CameraModalProps> = ({
     startCamera(nextFacing);
   };
 
-  // Take photo from video stream
+  // Take photo from video stream with automatic 1:1 square crop
   const handleSnapPhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    const vW = video.videoWidth || 640;
+    const vH = video.videoHeight || 480;
+    const size = Math.min(vW, vH);
+    const startX = (vW - size) / 2;
+    const startY = (vH - size) / 2;
+
+    canvas.width = size;
+    canvas.height = size;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -126,8 +132,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({
     setFlashEffect(true);
     setTimeout(() => setFlashEffect(false), 200);
 
-    // Draw video frame to canvas
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Draw square cropped video frame to canvas
+    ctx.drawImage(video, startX, startY, size, size, 0, 0, size, size);
     const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
 
     setCapturedImage(dataUrl);
@@ -135,7 +141,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
     setMode('PREVIEW');
   };
 
-  // Upload fallback file
+  // Upload fallback file with automatic 1:1 square crop
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -143,9 +149,32 @@ export const CameraModal: React.FC<CameraModalProps> = ({
     const reader = new FileReader();
     reader.onload = (event) => {
       if (event.target?.result) {
-        setCapturedImage(event.target.result as string);
-        stopCamera();
-        setMode('PREVIEW');
+        const rawUrl = event.target.result as string;
+        const img = new Image();
+        img.onload = () => {
+          if (!canvasRef.current) {
+            setCapturedImage(rawUrl);
+            stopCamera();
+            setMode('PREVIEW');
+            return;
+          }
+          const canvas = canvasRef.current;
+          const size = Math.min(img.width, img.height);
+          const startX = (img.width - size) / 2;
+          const startY = (img.height - size) / 2;
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, startX, startY, size, size, 0, 0, size, size);
+            setCapturedImage(canvas.toDataURL('image/jpeg', 0.92));
+          } else {
+            setCapturedImage(rawUrl);
+          }
+          stopCamera();
+          setMode('PREVIEW');
+        };
+        img.src = rawUrl;
       }
     };
     reader.readAsDataURL(file);
@@ -244,7 +273,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
           {/* CAMERA MODE */}
           {mode === 'CAMERA' && (
             <div className="space-y-3">
-              <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] bg-stone-900 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center">
+              <div className="relative w-full max-w-[360px] aspect-square mx-auto bg-stone-900 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center border-2 border-amber-300/80">
                 {/* White Flash overlay */}
                 {flashEffect && <div className="absolute inset-0 bg-white z-30 animate-ping opacity-90"></div>}
 
@@ -360,8 +389,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({
                 </button>
               </div>
 
-              {/* Photo Preview Frame */}
-              <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] bg-stone-900 rounded-2xl overflow-hidden shadow-md border border-[#EFEAE2]">
+              {/* Photo Preview Frame - Square 1:1 with rounded border */}
+              <div className="relative w-full max-w-[360px] aspect-square mx-auto bg-stone-900 rounded-3xl overflow-hidden shadow-lg border-2 border-amber-400">
                 <img
                   src={capturedImage}
                   alt="Proof Preview"
