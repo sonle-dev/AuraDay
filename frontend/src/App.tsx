@@ -3,10 +3,14 @@ import { AppLayout } from './components/layout/AppLayout';
 import { FeedView } from './components/feed/FeedView';
 import { CheckInView } from './components/checkin/CheckInView';
 import { LockerView } from './components/locker/LockerView';
+import { ProfileSettingsView } from './components/profile/ProfileSettingsView';
 
 export const App: React.FC = () => {
-  const [currentTab, setCurrentTab] = useState<'feed' | 'checkin' | 'locker' | 'friends'>('feed');
+  const [currentTab, setCurrentTab] = useState<'feed' | 'checkin' | 'locker' | 'friends' | 'profile'>('feed');
   const [streakDays, setStreakDays] = useState<number>(7);
+  const [username, setUsername] = useState<string>('Lê Hồng Sơn');
+  const [bio, setBio] = useState<string>('Sinh viên K20 CNTT • Quyết tâm không thức khuya & duy trì chuỗi học tập đều đặn ☕🔥');
+  const [avatarUrl, setAvatarUrl] = useState<string>('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80');
 
   const handleCheckInSuccess = (data: any) => {
     setStreakDays((prev) => prev + 1);
@@ -14,16 +18,38 @@ export const App: React.FC = () => {
     setCurrentTab('locker');
   };
 
+  const handleProfileUpdated = (updated: { username: string; bio: string; avatarUrl: string }) => {
+    setUsername(updated.username);
+    setBio(updated.bio);
+    setAvatarUrl(updated.avatarUrl);
+  };
+
+  const handleLogout = () => {
+    alert('🚪 Bạn đã đăng xuất thành công khỏi AuraDay!');
+    setCurrentTab('feed');
+  };
+
   return (
     <AppLayout
       currentTab={currentTab}
       onTabChange={setCurrentTab}
       streakDays={streakDays}
-      username="Lê Hồng Sơn"
+      username={username}
+      avatarUrl={avatarUrl}
     >
       {currentTab === 'feed' && <FeedView />}
       {currentTab === 'checkin' && <CheckInView onCheckInSuccess={handleCheckInSuccess} />}
       {currentTab === 'locker' && <LockerView />}
+      {currentTab === 'profile' && (
+        <ProfileSettingsView
+          initialUsername={username}
+          initialBio={bio}
+          initialAvatarUrl={avatarUrl}
+          initialStreakDays={streakDays}
+          onProfileUpdated={handleProfileUpdated}
+          onLogout={handleLogout}
+        />
+      )}
       {currentTab === 'friends' && (
         <div className="p-8 rounded-3xl bg-white border border-[#EFEAE2] shadow-sm shadow-amber-950/5 text-center space-y-4">
           <div className="text-4xl">👥🤝</div>

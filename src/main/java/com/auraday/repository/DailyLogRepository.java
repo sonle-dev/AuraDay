@@ -27,4 +27,7 @@ public interface DailyLogRepository extends JpaRepository<DailyLog, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("SELECT COALESCE(SUM(d.studyMinutes), 0) FROM DailyLog d WHERE d.user.id = :userId")
+    Integer sumTotalStudyMinutesByUserId(@Param("userId") Long userId);
 }

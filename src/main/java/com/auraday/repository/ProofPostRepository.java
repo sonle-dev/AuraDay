@@ -23,6 +23,8 @@ public interface ProofPostRepository extends JpaRepository<ProofPost, Long> {
 
     List<ProofPost> findByPrivacyModeOrderByCreatedAtDesc(PrivacyMode privacyMode);
 
+    long countByUserId(Long userId);
+
     /**
      * Bảng tin mạng xã hội cho user:
      * - Bài viết PUBLIC

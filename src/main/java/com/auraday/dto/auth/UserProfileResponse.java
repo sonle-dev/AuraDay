@@ -21,8 +21,11 @@ public class UserProfileResponse {
     private String username;
     private String email;
     private String avatarUrl;
+    private String bio;
     private UserRole role;
+    private com.auraday.entity.enums.PrivacyMode defaultPrivacyMode;
     private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 
     public static UserProfileResponse fromEntity(User user) {
         if (user == null) {
@@ -33,8 +36,11 @@ public class UserProfileResponse {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .avatarUrl(user.getAvatarUrl())
+                .bio(user.getBio())
                 .role(user.getRole())
+                .defaultPrivacyMode(user.getDefaultPrivacyMode())
                 .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 }

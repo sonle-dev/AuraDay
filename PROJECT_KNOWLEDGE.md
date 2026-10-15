@@ -99,7 +99,10 @@
 | :--- | :--- | :---: | :--- |
 | `POST` | `/api/auth/register` | Public | Đăng ký tài khoản sinh viên mới (`username`, `email`, `password`, `avatarUrl`). Trả về JWT Token. |
 | `POST` | `/api/auth/login` | Public | Đăng nhập bằng username hoặc email. Trả về `accessToken`, `refreshToken`, thông tin User. |
-| `GET` | `/api/users/me` | Bearer | Lấy thông tin hồ sơ (Profile) của sinh viên hiện tại đăng nhập. |
+| `GET` | `/api/users/me` | Bearer | Lấy thông tin hồ sơ (Profile) của sinh viên hiện tại đăng nhập (kèm `bio`, `defaultPrivacyMode`). |
+| `PUT` | `/api/users/me` | Bearer | Cập nhật thông tin hồ sơ cá nhân (`username`, `bio`, `avatarUrl`, `defaultPrivacyMode`). Kiểm tra chống trùng username. |
+| `PUT` | `/api/users/me/password` | Bearer | Đổi mật khẩu tài khoản (xác thực BCrypt mật khẩu cũ, kiểm tra xác nhận mật khẩu mới, chặn trùng mật khẩu cũ). |
+| `GET` | `/api/users/me/stats` | Bearer | Lấy thống kê kỷ luật cá nhân: Tổng số bài Locker, Tổng số bạn bè, Chuỗi ngày Streak liên tiếp, Tổng số phút tự học. |
 
 ### 4.2. Daily Log & Habit Check-in API
 | Phương thức | Endpoint | Auth | Mô tả |
@@ -214,19 +217,20 @@ d:\AuraDay\
 
 ---
 
-## 6. 🧪 DANH SÁCH BỘ KIỂM THỬ (18 TESTS - 100% PASS)
+## 6. 🧪 DANH SÁCH BỘ KIỂM THỬ (23 TESTS - 100% PASS)
 1. `AuraDayApplicationTests`: Kiểm thử nạp Spring Context.
 2. `UserRepositoryTest`: Kiểm thử CRUD User, unique constraint, findByUsername/email.
 3. `DailyLogRepositoryTest`: Kiểm thử nhật ký ngày, tính tổng số phút học tập.
 4. `CustomTaskRepositoryTest`: Kiểm thử nhiệm vụ kỷ luật cá nhân, đếm và lọc theo trạng thái.
-5. `FriendshipRepositoryTest`: Kiểm thử gửi lời mời kết bạn, kiểm tra quan hệ bạn bè 2 chiều (`areFriends`), lấy danh sách bạn bè chính thức (`findAllAcceptedFriends`).
-6. `ProofPostRepositoryTest`: Kiểm thử đăng bài minh chứng kèm DailyLog, thuật toán truy vấn Newsfeed phân quyền.
+5. `FriendshipRepositoryTest`: Kiểm thử gửi lời mời kết bạn, kiểm tra quan hệ bạn bè 2 chiều (`areFriends`), lấy danh sách bạn bè chính thức (`findAllAcceptedFriends`), đếm bạn bè (`countAcceptedFriends`).
+6. `ProofPostRepositoryTest`: Kiểm thử đăng bài minh chứng kèm DailyLog, thuật toán truy vấn Newsfeed phân quyền, đếm bài viết (`countByUserId`).
 7. `InteractionRepositoryTest`: Kiểm thử Like, Comment và tính năng đặc thù **NUDGE**.
 8. `JwtTokenProviderTest`: Kiểm thử sinh token JWT, trích xuất Claims, giải mã và xác thực token.
 9. `AuthControllerTest`: Kiểm thử đăng ký tài khoản mới và đăng nhập nhận JWT Token, lấy Profile cá nhân.
 10. `DailyLogAndTaskIntegrationTest`: Kiểm thử check-in hàng ngày với ràng buộc học tập >= 15 phút, từ chối khi < 15 phút, và CRUD CustomTask.
 11. `ProofPostAndLockerIntegrationTest`: Kiểm thử upload ảnh minh chứng dạng Multipart, truy vấn Locker cá nhân theo bộ lọc ngày/tháng/năm và privacyMode tiếng Việt ("Chỉ mình tôi").
 12. `SocialAndFeedIntegrationTest`: Kiểm thử gửi/chấp nhận lời mời kết bạn, kiểm tra Newsfeed bạn bè (chỉ thấy bài public/friends_only), tương tác Thả tim, Bình luận và gửi Nudge nhắc nhở.
+13. `UserProfileAndSettingsIntegrationTest`: Kiểm thử cập nhật thông tin cá nhân (bio, avatarUrl, username, privacyMode), từ chối khi username trùng lặp, đổi mật khẩu an toàn với BCrypt và đăng nhập lại bằng mật khẩu mới, kiểm tra thống kê cá nhân (Locker posts, Streak days, tổng giờ học).
 
 ---
 
@@ -238,6 +242,7 @@ d:\AuraDay\
 | **2026-10-16 (v3)** | Antigravity AI | Thiết kế toàn diện Frontend AuraRoutine phong cách **Warm Tech / Cozy Dark Mode** (#1A1614, #26211E, Cam hổ phách #D97706, Vàng ấm #F59E0B): Responsive Desktop Left Sidebar + Mobile Bottom Navigation, Focus Timer >= 15p (vòng tròn tiến độ SVG), Tủ khóa Locker kèm Popup Modal đổi quyền riêng tư (Công khai/Bạn bè/Chỉ mình tôi), Bảng tin Feed với hiệu ứng Thả tim nổ tim và nút **Nudge** rung nhẹ (micro-interaction shake animation). Tạo prototype tương tác Generative UI. | Frontend Components & UI Preview Built, Tests 18/18 PASS, Ready to push. |
 | **2026-10-16 (v4)** | Antigravity AI | Tích hợp logo chính thức AuraDay (ảnh monogram AD nền trong suốt do người dùng cung cấp) vào favicon trang web, Sidebar Desktop, Mobile Navigation Bar. Thiết lập kết nối đồng bộ Backend Spring Boot với CSDL PostgreSQL 18 thực tế trên cổng 5432 và Frontend Vite trên cổng 3000. | All services active, Git tracked & updated. |
 | **2026-10-16 (v5)** | Antigravity AI | Tái thiết kế toàn bộ giao diện Frontend theo phong cách **Gen Z Warm Light (Tông Ấm Sáng, Dịu Mắt & Trẻ Trung)**: Chuyển đổi từ Cozy Dark sang nền kem vani / sữa yến mạch dịu mắt `#FAF8F5`, thẻ card trắng ấm viền cát `#FFFFFF` + `#EFEAE2`, chữ màu cà phê espresso `#2C221E` (chống mỏi mắt, không gắt), màu nhấn mật ong ấm & cam đào `#F59E0B` / `#F97316`, cập nhật Focus Timer, Locker, Feed, Nudge toast và tạo `tsconfig.json` cho bản build hoàn chỉnh. | Build & Tests 100% PASS, Hot Reloaded. |
+| **2026-10-16 (v6)** | Antigravity AI | Phát triển hoàn thiện module **Quản Lý Tài Khoản (Profile) & Cài Đặt (Settings)**: <br>1. **Backend**: Flyway V2 migration bổ sung `bio` và `default_privacy_mode`; API `PUT /api/users/me` (cập nhật bio, avatar, username chống trùng), `PUT /api/users/me/password` (đổi mật khẩu BCrypt an toàn), `GET /api/users/me/stats` (thống kê Locker posts, Friends, Streak days, Study minutes). Bổ sung test suite `UserProfileAndSettingsIntegrationTest` (23 tests PASS 100%). <br>2. **Frontend**: Giao diện `ProfileSettingsView.tsx` tông Gen Z Warm Light gồm 3 tab chuyên sâu: **Hồ sơ** (avatar, bio, visual metric cards, edit form), **Cài đặt quyền riêng tư** (chế độ Locker mặc định, toggle chia sẻ streak, cho phép nhận Nudge), **Tài khoản & Bảo mật** (form đổi mật khẩu, đăng xuất an toàn). Tích hợp điều hướng mượt mà trên Desktop Sidebar và Mobile Bottom Nav. | Tests 23/23 PASS, Build clean, Ready to push. |
 
 ---
 
@@ -254,7 +259,8 @@ d:\AuraDay\
     - Đúng giờ: Xanh bơ nhạt `#ECFDF5` (`text-emerald-800`)
     - Ăn vặt / Cảnh báo: Hồng đào nhạt `#FFF1F2` (`text-rose-700`)
 - **Bộ Component cốt lõi (`frontend/src/`)**:
-  - `components/layout/AppLayout.tsx`: Shell tương thích Desktop (Sidebar kính ấm mờ) và Mobile (Bottom Navigation thanh thoát).
+  - `components/layout/AppLayout.tsx`: Shell tương thích Desktop (Sidebar kính ấm mờ) và Mobile (Bottom Navigation thanh thoát kèm avatar mở hồ sơ).
+  - `components/profile/ProfileSettingsView.tsx`: Trang quản lý tài khoản & cài đặt đa tab: Hồ sơ cá nhân (thẻ số liệu, chỉnh sửa username/bio/avatar), Cài đặt quyền riêng tư (chế độ Locker mặc định, toggle streak & nudge), Bảo mật & Đăng xuất.
   - `components/checkin/CheckInView.tsx`: Màn hình check-in 3 cữ ăn, toggle ăn vặt, Focus Study Timer tối thiểu 15 phút với vòng tròn SVG màu mật ong.
   - `components/locker/LockerView.tsx`: Tủ khóa bằng chứng lọc theo ngày/tháng/năm, Popup Modal phân quyền riêng tư (`Công khai`, `Bạn bè`, `Chỉ mình tôi`).
   - `components/feed/PostCard.tsx` & `FeedView.tsx`: Thẻ bài đăng bảng tin, nút Like nổ tim, nút Nudge rung lắc vui nhộn (`animate-nudge` micro-interaction).

@@ -50,10 +50,19 @@ public class User {
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 
+    @Size(max = 255, message = "Bio tối đa 255 ký tự")
+    @Column(name = "bio", length = 255)
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
     @Builder.Default
     private UserRole role = UserRole.ROLE_USER;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "default_privacy_mode", length = 20)
+    @Builder.Default
+    private com.auraday.entity.enums.PrivacyMode defaultPrivacyMode = com.auraday.entity.enums.PrivacyMode.FRIENDS_ONLY;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
@@ -84,6 +93,9 @@ public class User {
         this.updatedAt = now;
         if (this.role == null) {
             this.role = UserRole.ROLE_USER;
+        }
+        if (this.defaultPrivacyMode == null) {
+            this.defaultPrivacyMode = com.auraday.entity.enums.PrivacyMode.FRIENDS_ONLY;
         }
     }
 
