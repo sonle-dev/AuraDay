@@ -2,6 +2,7 @@ package com.auraday.controller;
 
 import com.auraday.common.ApiResponse;
 import com.auraday.dto.auth.UserProfileResponse;
+import com.auraday.dto.social.FriendSuggestionResponse;
 import com.auraday.dto.social.FriendshipResponse;
 import com.auraday.security.SecurityUtils;
 import com.auraday.service.FriendshipService;
@@ -53,5 +54,12 @@ public class FriendshipController {
         Long currentUserId = SecurityUtils.getCurrentUserId();
         List<FriendshipResponse> requests = friendshipService.getPendingRequests(currentUserId);
         return ResponseEntity.ok(ApiResponse.success(requests));
+    }
+
+    @GetMapping("/suggestions")
+    public ResponseEntity<ApiResponse<List<FriendSuggestionResponse>>> getFriendSuggestions() {
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        List<FriendSuggestionResponse> suggestions = friendshipService.getFriendSuggestions(currentUserId);
+        return ResponseEntity.ok(ApiResponse.success(suggestions));
     }
 }

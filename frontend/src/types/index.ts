@@ -58,3 +58,49 @@ export interface Interaction {
   content?: string;
   createdAt: string;
 }
+
+export type FriendSuggestionType = 'MUTUAL_FRIENDS' | 'NEARBY';
+
+export interface FriendSuggestion {
+  userId: number;
+  username: string;
+  avatarUrl?: string;
+  bio?: string;
+  streakDays: number;
+  mutualFriendsCount: number;
+  mutualFriendNames: string[];
+  suggestionReason: string;
+  location?: string;
+  distanceKm?: number;
+  habitHighlight?: string;
+  status?: 'IDLE' | 'REQUEST_SENT' | 'REMOVED';
+}
+
+export interface Buddy {
+  id: number;
+  userId: number;
+  username: string;
+  avatarUrl?: string;
+  bio?: string;
+  streakDays: number;
+  location?: string;
+  distanceKm?: number;
+  isOnline: boolean;
+  lastActive: string;
+  currentHabit: string;
+  todayCheckedIn: boolean;
+  nudgedToday: boolean;
+}
+
+export interface FriendRequestItem {
+  id: number;
+  fromUserId: number;
+  username: string;
+  avatarUrl?: string;
+  bio?: string;
+  streakDays: number;
+  location?: string;
+  mutualCount: number;
+  createdAt: string;
+}
+
