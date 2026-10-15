@@ -53,6 +53,13 @@ export const LockerView: React.FC<LockerViewProps> = ({ initialPosts }) => {
   ];
 
   const [posts, setPosts] = useState<ProofPost[]>(defaultProofs);
+
+  React.useEffect(() => {
+    if (initialPosts) {
+      setPosts(initialPosts);
+    }
+  }, [initialPosts]);
+
   const [selectedPost, setSelectedPost] = useState<ProofPost | null>(null);
   const [filterPrivacy, setFilterPrivacy] = useState<string>('ALL');
   const [filterMonth, setFilterMonth] = useState<string>('10');
