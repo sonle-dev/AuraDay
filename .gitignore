@@ -43,3 +43,6 @@ Desktop.ini
 .env
 *.log
 uploads/
+data/
+node_modules/
+frontend/node_modules/
