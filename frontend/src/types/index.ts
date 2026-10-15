@@ -47,7 +47,9 @@ export interface ProofPost {
   nudgeCount: number;
   likedByCurrentUser: boolean;
   isFriend?: boolean;
+  friend?: boolean;
   isCurrentUser?: boolean;
+  currentUser?: boolean;
   friendRequestSent?: boolean;
 }
 

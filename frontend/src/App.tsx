@@ -144,6 +144,30 @@ export const App: React.FC = () => {
     );
   };
 
+  const [isFeedRefreshing, setIsFeedRefreshing] = useState<boolean>(false);
+
+  // Manual or Gesture Feed Reload from Database
+  const handleRefreshFeed = async () => {
+    setIsFeedRefreshing(true);
+    try {
+      const [feedRes, statsRes] = await Promise.all([
+        feedApi.getFeed(0, 30),
+        userApi.getStats().catch(() => null)
+      ]);
+
+      if (feedRes?.content) {
+        setFeedPosts(feedRes.content);
+      }
+      if (statsRes?.currentStreakDays !== undefined) {
+        setStreakDays(statsRes.currentStreakDays);
+      }
+    } catch (err) {
+      console.error('Error refreshing feed from database:', err);
+    } finally {
+      setIsFeedRefreshing(false);
+    }
+  };
+
   const handleLikePost = async (postId: number) => {
     try {
       await feedApi.interact(postId, 'LIKE');
@@ -179,6 +203,7 @@ export const App: React.FC = () => {
     <AppLayout
       currentTab={currentTab}
       onTabChange={setCurrentTab}
+      onRefreshFeed={handleRefreshFeed}
       streakDays={streakDays}
       username={username}
       avatarUrl={avatarUrl}
@@ -193,6 +218,9 @@ export const App: React.FC = () => {
       {currentTab === 'feed' && (
         <FeedView
           posts={feedPosts}
+          currentUsername={username}
+          onRefresh={handleRefreshFeed}
+          isRefreshing={isFeedRefreshing}
           onAddFriend={handleAddFriend}
           onLike={handleLikePost}
           onNudge={handleNudgePost}

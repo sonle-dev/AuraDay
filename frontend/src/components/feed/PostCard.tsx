@@ -3,6 +3,7 @@ import { ProofPost } from '../../types';
 
 interface PostCardProps {
   post: ProofPost;
+  currentUsername?: string;
   onLike?: (postId: number) => void;
   onNudge?: (postId: number) => void;
   onComment?: (postId: number, content: string) => void;
@@ -11,11 +12,22 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({
   post,
+  currentUsername = 'lehongson',
   onLike,
   onNudge,
   onComment,
   onAddFriend
 }) => {
+  const isPostAuthorSelf = Boolean(
+    post.isCurrentUser ||
+    post.currentUser ||
+    (currentUsername && post.username.trim().toLowerCase() === currentUsername.trim().toLowerCase())
+  );
+
+  const isAlreadyFriend = Boolean(
+    !isPostAuthorSelf && (post.isFriend || post.friend)
+  );
+
   const [isLiked, setIsLiked] = useState<boolean>(post.likedByCurrentUser);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount);
   const [nudgeCount, setNudgeCount] = useState<number>(post.nudgeCount);
@@ -111,11 +123,12 @@ export const PostCard: React.FC<PostCardProps> = ({
 
         {/* Action / Relationship Badge */}
         <div className="shrink-0 flex items-center gap-1.5">
-          {post.isCurrentUser ? (
-            <span className="px-2.5 py-1 rounded-xl bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-bold">
-              ✨ Bạn
+          {isPostAuthorSelf ? (
+            <span className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 text-amber-900 border border-amber-300 text-xs font-black shadow-xs flex items-center gap-1">
+              <span>✨</span>
+              <span>Bạn</span>
             </span>
-          ) : post.isFriend ? (
+          ) : isAlreadyFriend ? (
             <span className="px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/80 text-xs font-bold flex items-center gap-1">
               <span>👥 Bạn bè</span>
             </span>

@@ -34,14 +34,31 @@ public class ProofPostResponse {
     private long commentCount = 0;
     @Builder.Default
     private long nudgeCount = 0;
+    @com.fasterxml.jackson.annotation.JsonProperty("likedByCurrentUser")
     @Builder.Default
     private boolean likedByCurrentUser = false;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("isFriend")
     @Builder.Default
     private boolean isFriend = false;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("isCurrentUser")
     @Builder.Default
     private boolean isCurrentUser = false;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("friendRequestSent")
     @Builder.Default
     private boolean friendRequestSent = false;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("currentUser")
+    public boolean getCurrentUser() {
+        return isCurrentUser;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("friend")
+    public boolean getFriend() {
+        return isFriend;
+    }
 
     public static ProofPostResponse fromEntity(ProofPost post) {
         if (post == null) {

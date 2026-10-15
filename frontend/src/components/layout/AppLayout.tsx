@@ -3,6 +3,7 @@ import React from 'react';
 interface AppLayoutProps {
   currentTab: 'feed' | 'checkin' | 'locker' | 'friends' | 'profile';
   onTabChange: (tab: 'feed' | 'checkin' | 'locker' | 'friends' | 'profile') => void;
+  onRefreshFeed?: () => void;
   children: React.ReactNode;
   streakDays?: number;
   username?: string;
@@ -12,6 +13,7 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({
   currentTab,
   onTabChange,
+  onRefreshFeed,
   children,
   streakDays = 7,
   username = "Gen Z Kỷ Luật",
@@ -71,7 +73,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       <aside className="hidden md:flex flex-col w-72 bg-white/85 backdrop-blur-xl border-r border-[#EFEAE2] p-6 justify-between sticky top-0 h-screen z-30">
         <div>
           {/* Logo Brand */}
-          <div className="flex items-center space-x-3 mb-8 cursor-pointer group" onClick={() => onTabChange('feed')}>
+          <div 
+            className="flex items-center space-x-3 mb-8 cursor-pointer group" 
+            onClick={() => {
+              onTabChange('feed');
+              if (onRefreshFeed) onRefreshFeed();
+            }}
+            title="Về Bảng Tin và tải lại dữ liệu mới nhất"
+          >
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FFF5EB] to-[#FEF3C7] border border-amber-200/90 p-1 flex items-center justify-center shadow-sm shadow-amber-900/10 group-hover:scale-105 group-hover:border-amber-400 transition-all">
               <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 2px 4px rgba(217, 119, 6, 0.25))" />
             </div>
@@ -107,7 +116,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               return (
                 <button
                   key={item.id}
-                  onClick={() => onTabChange(item.id)}
+                  onClick={() => {
+                    onTabChange(item.id);
+                    if (item.id === 'feed' && onRefreshFeed) onRefreshFeed();
+                  }}
                   className={`w-full flex items-center space-x-3.5 px-4 py-3 rounded-2xl font-semibold text-sm transition-all duration-200 ${
                     isActive
                       ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-500/25 scale-[1.02]'
@@ -139,7 +151,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       <main className="flex-1 flex flex-col min-w-0 pb-28 md:pb-10">
         {/* Mobile Header Bar */}
         <header className="md:hidden flex items-center justify-between p-3.5 bg-white/90 backdrop-blur-md border-b border-[#EFEAE2] sticky top-0 z-20">
-          <div className="flex items-center space-x-2.5">
+          <div 
+            className="flex items-center space-x-2.5 cursor-pointer"
+            onClick={() => {
+              onTabChange('feed');
+              if (onRefreshFeed) onRefreshFeed();
+            }}
+            title="Về Bảng Tin và tải lại dữ liệu mới nhất"
+          >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFF5EB] to-[#FEF3C7] border border-amber-200 p-1 flex items-center justify-center shadow-sm">
               <img src="/logo.png" alt="AuraDay Logo" className="w-full h-full object-contain filter drop-shadow(0 1px 2px rgba(217, 119, 6, 0.2))" />
             </div>
@@ -174,7 +193,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             return (
               <button
                 key={item.id}
-                onClick={() => onTabChange(item.id)}
+                onClick={() => {
+                  onTabChange(item.id);
+                  if (item.id === 'feed' && onRefreshFeed) onRefreshFeed();
+                }}
                 className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all duration-200 ${
                   isActive ? 'text-amber-600 font-bold scale-105' : 'text-[#918072]'
                 }`}
