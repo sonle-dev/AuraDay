@@ -234,11 +234,26 @@ d:\AuraDay\
 | Ngày cập nhật | Người thực hiện | Nội dung chi tiết | Trạng thái Git & Test |
 | :--- | :--- | :--- | :--- |
 | **2026-10-16 (v1)** | Antigravity AI | Khởi tạo cấu trúc dự án AuraDay: Spring Boot 3.3.4, Java 17+, Flyway V1 migration, 6 Entities, 6 Repositories, Security & JWT, 8 Test Suites. Tạo file `PROJECT_KNOWLEDGE.md`. | Tests Passed (100%), Pushed commit `dceb0c8`. |
-| **2026-10-16 (v2)** | Antigravity AI | Hoàn thiện 4 nhóm nghiệp vụ chính: **1. Auth API** (Register, Login JWT, Profile `/users/me`), **2. Daily Log & Task API** (Check-in ăn uống, học tập >= 15p, CRUD CustomTask), **3. Locker & Proof Post API** (Upload ảnh minh chứng lưu local, lọc Locker theo ngày/tháng/năm và privacyMode), **4. Social & Feed API** (Gửi/chấp nhận kết bạn, Friend Feed, Thả tim, Bình luận, Nudge). Tích hợp JwtAuthenticationFilter, GlobalExceptionHandler. Bổ sung 4 bộ Controller Integration Test Suites (Tổng 18 tests PASS 100%). | Tests Passed (18/18 - 100%), Ready to commit & push. |
+| **2026-10-16 (v2)** | Antigravity AI | Hoàn thiện 4 nhóm nghiệp vụ chính: **1. Auth API** (Register, Login JWT, Profile `/users/me`), **2. Daily Log & Task API** (Check-in ăn uống, học tập >= 15p, CRUD CustomTask), **3. Locker & Proof Post API** (Upload ảnh minh chứng lưu local, lọc Locker theo ngày/tháng/năm và privacyMode), **4. Social & Feed API** (Gửi/chấp nhận kết bạn, Friend Feed, Thả tim, Bình luận, Nudge). Tích hợp JwtAuthenticationFilter, GlobalExceptionHandler. Bổ sung 4 bộ Controller Integration Test Suites (Tổng 18 tests PASS 100%). | Tests Passed (18/18 - 100%), Pushed commit `bed559d`. |
+| **2026-10-16 (v3)** | Antigravity AI | Thiết kế toàn diện Frontend AuraRoutine phong cách **Warm Tech / Cozy Dark Mode** (#1A1614, #26211E, Cam hổ phách #D97706, Vàng ấm #F59E0B): Responsive Desktop Left Sidebar + Mobile Bottom Navigation, Focus Timer >= 15p (vòng tròn tiến độ SVG), Tủ khóa Locker kèm Popup Modal đổi quyền riêng tư (Công khai/Bạn bè/Chỉ mình tôi), Bảng tin Feed với hiệu ứng Thả tim nổ tim và nút **Nudge** rung nhẹ (micro-interaction shake animation). Tạo prototype tương tác Generative UI. | Frontend Components & UI Preview Built, Tests 18/18 PASS, Ready to push. |
 
 ---
 
-## 8. 🚀 LỘ TRÌNH PHÁT TRIỂN TIẾP THEO (NEXT STEPS)
+## 8. 🎨 THIẾT KẾ GIAO DIỆN FRONTEND (WARM TECH / COZY DARK MODE)
+- **Bảng màu chủ đạo**:
+  - Nền chính: `#1A1614` (Nâu cà phê đậm / Cozy Dark)
+  - Bề mặt kính: `#221C18`, `#26211E`, `#2A221D` (Glassmorphism mờ với viền `border-amber-600/20`)
+  - Điểm nhấn: Cam hổ phách `#D97706`, Vàng ấm `#F59E0B`, Cam đất `#EA580C`
+  - Màu chữ: Kem sáng `#F5EBE1`, Chữ phụ `#A8998C`
+- **Bộ Component cốt lõi (`frontend/src/`)**:
+  - `components/layout/AppLayout.tsx`: Shell tương thích Desktop (Sidebar trái thanh thoát) và Mobile (Bottom Navigation tiện bấm 1 tay).
+  - `components/checkin/CheckInView.tsx`: Màn hình check-in 3 cữ ăn, toggle ăn vặt, Focus Study Timer tối thiểu 15 phút với vòng tròn SVG hoạt họa.
+  - `components/locker/LockerView.tsx`: Tủ khóa bằng chứng lọc theo ngày/tháng/năm, Popup Modal phân quyền riêng tư (`Công khai`, `Bạn bè`, `Chỉ mình tôi`).
+  - `components/feed/PostCard.tsx` & `FeedView.tsx`: Thẻ bài đăng bảng tin, nút Like hiệu ứng nổ tim, nút Nudge rung lắc nhẹ (`animate-nudge` micro-interaction).
+
+---
+
+## 9. 🚀 LỘ TRÌNH PHÁT TRIỂN TIẾP THEO (NEXT STEPS)
 1. **Module Cloud Media**: Tùy chọn tích hợp Cloudinary hoặc AWS S3 song song với Local Storage.
 2. **Module Streak & Gamification**: Tính toán chuỗi ngày kỷ luật liên tiếp (Streak Flame 🔥), điểm thưởng Aura Points khi không ăn vặt và học tập đều đặn.
 3. **Module Real-time Notification**: Tích hợp Spring WebSocket / STOMP để bắn popup Nudge tức thời khi bạn bè nhắc nhở.
