@@ -27,18 +27,21 @@ public interface ProofPostRepository extends JpaRepository<ProofPost, Long> {
 
     /**
      * Bảng tin mạng xã hội cho user:
-     * - Bài viết PUBLIC
-     * - Bài viết của chính user
+     * - Loại trừ hoàn toàn bài viết PRIVATE (chỉ người dùng thấy trong Locker cá nhân)
+     * - Bài viết PUBLIC của tất cả mọi người
+     * - Bài viết của chính user (chỉ khi PUBLIC hoặc FRIENDS_ONLY)
      * - Bài viết FRIENDS_ONLY của những người đã là bạn bè ACCEPTED
      */
     @Query("SELECT p FROM ProofPost p " +
-           "WHERE p.privacyMode = 'PUBLIC' " +
+           "WHERE p.privacyMode != 'PRIVATE' AND (" +
+           "      p.privacyMode = 'PUBLIC' " +
            "   OR p.user.id = :userId " +
            "   OR (p.privacyMode = 'FRIENDS_ONLY' AND p.user.id IN (" +
            "         SELECT CASE WHEN f.user.id = :userId THEN f.friend.id ELSE f.user.id END " +
            "         FROM Friendship f " +
            "         WHERE (f.user.id = :userId OR f.friend.id = :userId) AND f.status = 'ACCEPTED'" +
            "      )) " +
+           ") " +
            "ORDER BY p.createdAt DESC")
     Page<ProofPost> findFeedForUser(@Param("userId") Long userId, Pageable pageable);
 

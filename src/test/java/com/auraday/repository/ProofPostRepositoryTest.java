@@ -102,17 +102,30 @@ class ProofPostRepositoryTest {
                 .privacyMode(PrivacyMode.PUBLIC)
                 .build());
 
-        // userA đăng 1 bài PRIVATE (chính userA thấy)
-        proofPostRepository.save(ProofPost.builder()
+        // userA đăng 1 bài PRIVATE (chỉ nằm trong Locker, KHÔNG được hiện trên Bảng tin Feed)
+        ProofPost privatePostA = proofPostRepository.save(ProofPost.builder()
                 .user(userA)
                 .imageUrl("https://auraday.com/a_private.jpg")
                 .caption("Nhật ký cá nhân riêng tư")
                 .privacyMode(PrivacyMode.PRIVATE)
                 .build());
 
+        // userA đăng 1 bài PUBLIC (hiện trên Feed)
+        ProofPost publicPostA = proofPostRepository.save(ProofPost.builder()
+                .user(userA)
+                .imageUrl("https://auraday.com/a_public.jpg")
+                .caption("Bài công khai của chính mình")
+                .privacyMode(PrivacyMode.PUBLIC)
+                .build());
+
         Page<ProofPost> feed = proofPostRepository.findFeedForUser(userA.getId(), PageRequest.of(0, 10));
 
-        // Phải thấy: Bài bạn bè B (friends_only), bài stranger (public), bài cá nhân A (private). KHÔNG thấy stranger (friends_only).
+        // Phải thấy 3 bài: Bài bạn bè B (friends_only), bài stranger (public), bài cá nhân A (public).
+        // Tuyệt đối KHÔNG thấy: stranger (friends_only), bài cá nhân A (private).
         assertThat(feed.getContent()).hasSize(3);
+        assertThat(feed.getContent())
+                .extracting(ProofPost::getId)
+                .doesNotContain(privatePostA.getId())
+                .contains(publicPostA.getId());
     }
 }

@@ -36,6 +36,12 @@ public class ProofPostResponse {
     private long nudgeCount = 0;
     @Builder.Default
     private boolean likedByCurrentUser = false;
+    @Builder.Default
+    private boolean isFriend = false;
+    @Builder.Default
+    private boolean isCurrentUser = false;
+    @Builder.Default
+    private boolean friendRequestSent = false;
 
     public static ProofPostResponse fromEntity(ProofPost post) {
         if (post == null) {

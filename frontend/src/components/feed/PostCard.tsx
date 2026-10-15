@@ -6,13 +6,15 @@ interface PostCardProps {
   onLike?: (postId: number) => void;
   onNudge?: (postId: number) => void;
   onComment?: (postId: number, content: string) => void;
+  onAddFriend?: (userId: number, username: string) => void;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
   post,
   onLike,
   onNudge,
-  onComment
+  onComment,
+  onAddFriend
 }) => {
   const [isLiked, setIsLiked] = useState<boolean>(post.likedByCurrentUser);
   const [likeCount, setLikeCount] = useState<number>(post.likeCount);
@@ -20,6 +22,8 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isNudging, setIsNudging] = useState<boolean>(false);
   const [showComments, setShowComments] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>('');
+  const [isFriendRequested, setIsFriendRequested] = useState<boolean>(post.friendRequestSent || false);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [comments, setComments] = useState<{ id: number; username: string; text: string }[]>([
     { id: 1, username: 'hoang_nam', text: 'Cố lên nhé đồng chí, mai lại dậy sớm tiếp!' }
   ]);
@@ -63,40 +67,72 @@ export const PostCard: React.FC<PostCardProps> = ({
     setCommentText('');
   };
 
+  // Add Friend
+  const handleAddFriend = () => {
+    setIsFriendRequested(true);
+    setFeedbackMessage(`✨ Đã gửi lời mời kết bạn đến @${post.username}!`);
+    setTimeout(() => setFeedbackMessage(null), 3000);
+    if (onAddFriend) onAddFriend(post.userId, post.username);
+  };
+
   return (
     <article className="p-6 rounded-3xl bg-white border border-[#EFEAE2] space-y-4 shadow-sm shadow-amber-950/5 relative overflow-hidden transition-all hover:border-amber-300">
-      {/* Toast Notification khi Nudge */}
-      {nudgeFeedback && (
+      {/* Toast Notification khi Nudge hoặc Kết bạn */}
+      {(nudgeFeedback || feedbackMessage) && (
         <div className="absolute top-3 left-6 right-6 z-10 p-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-stone-950 font-black text-xs text-center shadow-lg shadow-amber-500/25 animate-bounce">
-          {nudgeFeedback}
+          {nudgeFeedback || feedbackMessage}
         </div>
       )}
 
       {/* Author Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center space-x-3 min-w-0">
           <img
             src={post.userAvatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"}
             alt={post.username}
-            className="w-11 h-11 rounded-full object-cover border-2 border-amber-300"
+            className="w-11 h-11 aspect-square rounded-2xl object-cover border-2 border-amber-300 shrink-0 shadow-sm"
           />
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-sm text-[#2C221E]">{post.username}</span>
-              <span className="bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-amber-200/80">
+              <span className="font-bold text-sm text-[#2C221E] truncate">{post.username}</span>
+              <span className="bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-200/80 shrink-0">
                 🔥 Chuỗi 5 ngày
               </span>
             </div>
-            <span className="text-xs text-[#918072]">
-              {new Date(post.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} • Hôm nay
-            </span>
+            <div className="flex items-center space-x-1.5 text-xs text-[#918072] mt-0.5">
+              <span>{new Date(post.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} • Hôm nay</span>
+              <span>•</span>
+              <span className="text-[11px] font-medium text-[#736357]">
+                {post.privacyMode === 'PUBLIC' ? '🌐 Công khai' : '👥 Bạn bè'}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Privacy Tag */}
-        <span className="text-[11px] font-semibold text-[#736357] bg-[#FAF8F5] px-2.5 py-1 rounded-xl border border-[#EFEAE2]">
-          {post.privacyMode === 'PUBLIC' ? '🌐 Công khai' : '👥 Bạn bè'}
-        </span>
+        {/* Action / Relationship Badge */}
+        <div className="shrink-0 flex items-center gap-1.5">
+          {post.isCurrentUser ? (
+            <span className="px-2.5 py-1 rounded-xl bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-bold">
+              ✨ Bạn
+            </span>
+          ) : post.isFriend ? (
+            <span className="px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/80 text-xs font-bold flex items-center gap-1">
+              <span>👥 Bạn bè</span>
+            </span>
+          ) : isFriendRequested ? (
+            <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+              Đã gửi kết bạn ✓
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAddFriend}
+              className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold text-xs shadow-sm shadow-amber-500/20 transition-all flex items-center gap-1"
+            >
+              <span>+ Kết bạn</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Caption */}

@@ -59,6 +59,60 @@ export const App: React.FC = () => {
     }
   ]);
 
+  const [feedPosts, setFeedPosts] = useState<ProofPost[]>([
+    {
+      id: 101,
+      userId: 2,
+      username: 'Trần Minh Quân',
+      userAvatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&auto=format&fit=crop&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=700&auto=format&fit=crop&q=80',
+      caption: 'Hoàn thành 120 phút Deep Work không dùng điện thoại! Kỷ luật tạo nên tự do ☕🔥',
+      privacyMode: 'FRIENDS_ONLY',
+      privacyModeLabel: 'Bạn bè',
+      createdAt: '2026-10-16T08:00:00Z',
+      likeCount: 18,
+      commentCount: 4,
+      nudgeCount: 5,
+      likedByCurrentUser: false,
+      isFriend: true,
+      isCurrentUser: false
+    },
+    {
+      id: 102,
+      userId: 3,
+      username: 'Lê Thảo My',
+      userAvatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=700&auto=format&fit=crop&q=80',
+      caption: 'Ăn trưa lành mạnh đúng 11h30 và kiên quyết nói không với trà sữa trân châu chiều nay! 🥗✨',
+      privacyMode: 'PUBLIC',
+      privacyModeLabel: 'Công khai',
+      createdAt: '2026-10-16T07:15:00Z',
+      likeCount: 29,
+      commentCount: 9,
+      nudgeCount: 12,
+      likedByCurrentUser: true,
+      isFriend: false,
+      isCurrentUser: false
+    },
+    {
+      id: 103,
+      userId: 4,
+      username: 'Đỗ Hoàng Long',
+      userAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=700&auto=format&fit=crop&q=80',
+      caption: '5km chạy bộ đón bình minh hồ Tây lúc 6h sáng. Khởi đầu ngày mới tràn đầy năng lượng! 🏃‍♂️🌅',
+      privacyMode: 'PUBLIC',
+      privacyModeLabel: 'Công khai',
+      createdAt: '2026-10-16T06:30:00Z',
+      likeCount: 35,
+      commentCount: 6,
+      nudgeCount: 8,
+      likedByCurrentUser: false,
+      isFriend: false,
+      isCurrentUser: false
+    }
+  ]);
+
   const handleCheckInSuccess = (data: any) => {
     setStreakDays((prev) => prev + 1);
 
@@ -85,7 +139,18 @@ export const App: React.FC = () => {
         likedByCurrentUser: false
       }));
 
+      // ALL posts go to Locker (including PRIVATE)
       setLockerPosts((prev) => [...newPosts, ...prev]);
+
+      // ONLY PUBLIC and FRIENDS_ONLY go to Feed (PRIVATE never appears on Feed!)
+      const feedEligible = newPosts
+        .filter((p) => p.privacyMode !== 'PRIVATE')
+        .map((p) => ({ ...p, isCurrentUser: true }));
+
+      if (feedEligible.length > 0) {
+        setFeedPosts((prev) => [...feedEligible, ...prev]);
+      }
+
       alert(`🔥 Tuyệt vời! Bạn đã hoàn tất check-in (${data.studyMinutes} phút tập trung) và đồng bộ ${data.proofs.length} ảnh minh chứng vào Tủ Khóa Locker! Chuỗi kỷ luật tăng lên ${streakDays + 1} ngày!`);
     } else {
       alert(`🔥 Tuyệt vời! Bạn đã hoàn thành check-in (${data.studyMinutes} phút tập trung). Chuỗi kỷ luật tăng lên ${streakDays + 1} ngày!`);
@@ -113,7 +178,18 @@ export const App: React.FC = () => {
       username={username}
       avatarUrl={avatarUrl}
     >
-      {currentTab === 'feed' && <FeedView />}
+      {currentTab === 'feed' && (
+        <FeedView
+          posts={feedPosts}
+          onAddFriend={(targetUserId) => {
+            setFeedPosts((prev) =>
+              prev.map((p) =>
+                p.userId === targetUserId ? { ...p, friendRequestSent: true } : p
+              )
+            );
+          }}
+        />
+      )}
       {currentTab === 'checkin' && <CheckInView onCheckInSuccess={handleCheckInSuccess} />}
       {currentTab === 'locker' && <LockerView initialPosts={lockerPosts} />}
       {currentTab === 'profile' && (

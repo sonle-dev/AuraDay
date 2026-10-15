@@ -46,6 +46,9 @@ export interface ProofPost {
   commentCount: number;
   nudgeCount: number;
   likedByCurrentUser: boolean;
+  isFriend?: boolean;
+  isCurrentUser?: boolean;
+  friendRequestSent?: boolean;
 }
 
 export interface Interaction {

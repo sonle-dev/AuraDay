@@ -10,6 +10,7 @@ import com.auraday.entity.enums.PrivacyMode;
 import com.auraday.exception.ResourceNotFoundException;
 import com.auraday.exception.UnauthorizedException;
 import com.auraday.repository.DailyLogRepository;
+import com.auraday.repository.FriendshipRepository;
 import com.auraday.repository.InteractionRepository;
 import com.auraday.repository.ProofPostRepository;
 import com.auraday.repository.UserRepository;
@@ -32,6 +33,7 @@ public class ProofPostService {
     private final UserRepository userRepository;
     private final DailyLogRepository dailyLogRepository;
     private final InteractionRepository interactionRepository;
+    private final FriendshipRepository friendshipRepository;
     private final FileStorageService fileStorageService;
 
     @Transactional
@@ -124,10 +126,15 @@ public class ProofPostService {
         long nudgeCount = interactionRepository.countByPostIdAndType(post.getId(), InteractionType.NUDGE);
         boolean liked = currentUserId != null && interactionRepository.existsByPostIdAndUserIdAndType(post.getId(), currentUserId, InteractionType.LIKE);
 
+        boolean isSelf = currentUserId != null && post.getUser().getId().equals(currentUserId);
+        boolean isFriend = !isSelf && currentUserId != null && friendshipRepository.areFriends(currentUserId, post.getUser().getId());
+
         response.setLikeCount(likeCount);
         response.setCommentCount(commentCount);
         response.setNudgeCount(nudgeCount);
         response.setLikedByCurrentUser(liked);
+        response.setFriend(isFriend);
+        response.setCurrentUser(isSelf);
         return response;
     }
 }
