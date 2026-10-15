@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -38,4 +39,21 @@ public interface ProofPostRepository extends JpaRepository<ProofPost, Long> {
            "      )) " +
            "ORDER BY p.createdAt DESC")
     Page<ProofPost> findFeedForUser(@Param("userId") Long userId, Pageable pageable);
+
+    /**
+     * Locker cá nhân của sinh viên với bộ lọc ngày/tháng/năm và privacy_mode
+     */
+    @Query("SELECT p FROM ProofPost p " +
+           "WHERE p.user.id = :userId " +
+           "  AND (:privacyMode IS NULL OR p.privacyMode = :privacyMode) " +
+           "  AND (CAST(:startDate AS timestamp) IS NULL OR p.createdAt >= :startDate) " +
+           "  AND (CAST(:endDate AS timestamp) IS NULL OR p.createdAt <= :endDate) " +
+           "ORDER BY p.createdAt DESC")
+    Page<ProofPost> findUserLocker(
+            @Param("userId") Long userId,
+            @Param("privacyMode") PrivacyMode privacyMode,
+            @Param("startDate") OffsetDateTime startDate,
+            @Param("endDate") OffsetDateTime endDate,
+            Pageable pageable
+    );
 }

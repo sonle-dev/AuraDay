@@ -42,3 +42,4 @@ Desktop.ini
 ### Environment Variables & Logs ###
 .env
 *.log
+uploads/
