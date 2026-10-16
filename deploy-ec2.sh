@@ -46,15 +46,15 @@ chmod -R 777 uploads
 
 # 4. Build và khởi chạy Docker Compose Stack
 echo "🔨 Đang tiến hành build container và kích hoạt hệ thống..."
-docker compose down || true
-docker compose up -d --build
+sudo docker compose down || true
+sudo docker compose up -d --build
 
 echo ""
 echo "=========================================================="
 echo "       🎉 DEPLOY THÀNH CÔNG HỆ THỐNG AURADAY LÊN EC2!     "
 echo "=========================================================="
 echo ""
-docker compose ps
+sudo docker compose ps
 echo ""
 echo "👉 Ứng dụng đang lắng nghe trên cổng 80 (HTTP)."
 echo "🌐 Bạn có thể truy cập ngay tại: http://<IP_PUBLIC_CỦA_EC2>"
