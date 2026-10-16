@@ -55,9 +55,11 @@ services:
       - backend
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       # Nginx đọc trực tiếp thư mục uploads để tối ưu tốc độ load ảnh người dùng
       - ./uploads:/var/www/uploads:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     networks:
       - auraday-network
 
