@@ -120,7 +120,7 @@ export const authApi = {
     return data;
   },
 
-  bootstrap: async (): Promise<ApiUser> => {
+  bootstrap: async (): Promise<ApiUser | null> => {
     const token = getStoredToken();
     if (token) {
       try {
@@ -130,20 +130,12 @@ export const authApi = {
         clearStoredToken();
       }
     }
+    return null;
+  },
 
-    // Auto-login or register demo user
-    try {
-      const loginRes = await authApi.login('lehongson', 'password123');
-      return loginRes.user;
-    } catch {
-      const regRes = await authApi.register({
-        username: 'lehongson',
-        email: 'lehongson@auraday.app',
-        password: 'password123',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
-      });
-      return regRes.user;
-    }
+  logout: () => {
+    clearStoredToken();
+    localStorage.removeItem('auraday_user');
   }
 };
 

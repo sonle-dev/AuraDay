@@ -1,32 +1,98 @@
 import React, { useState, useRef } from 'react';
 import { PostCard } from './PostCard';
-import { ProofPost } from '../../types';
+import { ProofPost, PrivacyMode } from '../../types';
+import { CameraModal } from '../checkin/CameraModal';
+import { proofApi } from '../../services/api';
 
 interface FeedViewProps {
   posts?: ProofPost[];
   currentUsername?: string;
+  currentUserAvatar?: string;
   onAddFriend?: (userId: number, username: string) => void;
   onLike?: (postId: number) => void;
   onNudge?: (postId: number) => void;
   onComment?: (postId: number, text: string) => void;
   onRefresh?: () => Promise<void> | void;
+  onPostCreated?: (newPost: ProofPost) => void;
   isRefreshing?: boolean;
 }
 
 export const FeedView: React.FC<FeedViewProps> = ({ 
   posts,
   currentUsername = 'lehongson',
+  currentUserAvatar = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   onAddFriend,
   onLike,
   onNudge,
   onComment,
   onRefresh,
+  onPostCreated,
   isRefreshing = false
 }) => {
   const [filter, setFilter] = useState<'ALL' | 'FRIENDS' | 'DISCOVER'>('ALL');
   const [pullY, setPullY] = useState<number>(0);
   const [isPulling, setIsPulling] = useState<boolean>(false);
   const touchStartY = useRef<number>(0);
+
+  // Quick Post Composer State
+  const [caption, setCaption] = useState<string>('');
+  const [postImage, setPostImage] = useState<string | null>(null);
+  const [privacyMode, setPrivacyMode] = useState<PrivacyMode>('PUBLIC');
+  const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
+  const [isPosting, setIsPosting] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPostImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCameraCapture = (result: { imageUrl: string; privacyMode: PrivacyMode; caption: string }) => {
+    setPostImage(result.imageUrl);
+    if (result.caption) setCaption(result.caption);
+    setPrivacyMode(result.privacyMode);
+    setIsCameraOpen(false);
+  };
+
+  const handlePublishPost = async () => {
+    if (!postImage) {
+      alert('Vui lòng chụp ảnh hoặc tải ảnh lên để đăng bài minh chứng!');
+      return;
+    }
+
+    try {
+      setIsPosting(true);
+      const res = await proofApi.createProof({
+        imageUrl: postImage,
+        caption: caption.trim() || 'Chia sẻ kỷ luật hôm nay cùng AuraDay ✨',
+        privacyMode
+      });
+
+      setPostImage(null);
+      setCaption('');
+      setPrivacyMode('PUBLIC');
+
+      if (onPostCreated && res) {
+        onPostCreated(res);
+      }
+      if (onRefresh) {
+        await onRefresh();
+      }
+
+      alert('✨ Chúc mừng! Bài viết và ảnh minh chứng của bạn đã được đăng thành công lên Bảng Tin!');
+    } catch (err: any) {
+      console.error('Publish error:', err);
+      alert('Lỗi khi đăng bài: ' + (err.message || 'Vui lòng thử lại.'));
+    } finally {
+      setIsPosting(false);
+    }
+  };
 
   // Pull-to-refresh mobile gesture handling
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -138,6 +204,109 @@ export const FeedView: React.FC<FeedViewProps> = ({
           <div className="text-3xl hidden sm:block">☕📖</div>
         </div>
       </div>
+
+      {/* Quick Post Box (Chụp ảnh & Đăng bài trực tiếp trên Bảng Tin) */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-white border border-[#E5DCCE] shadow-md shadow-amber-950/5">
+        <div className="flex items-start gap-3">
+          <img
+            src={currentUserAvatar}
+            alt={currentUsername}
+            className="w-10 h-10 rounded-2xl object-cover border-2 border-amber-300 shadow-xs shrink-0 mt-1"
+          />
+          <div className="flex-1 space-y-3">
+            <textarea
+              rows={2}
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder={`Chào ${currentUsername}! Hôm nay bạn có khoảnh khắc kỷ luật nào muốn chia sẻ không?`}
+              className="w-full p-3 rounded-2xl bg-[#FAF8F5] border border-[#E5DCCE] text-xs sm:text-sm text-[#2C221E] placeholder-[#918072]/70 focus:outline-none focus:bg-white focus:border-amber-500 transition-colors resize-none"
+            />
+
+            {/* Attached Photo Preview */}
+            {postImage && (
+              <div className="relative inline-block rounded-2xl overflow-hidden border-2 border-amber-400 shadow-sm">
+                <img
+                  src={postImage}
+                  alt="Ảnh minh chứng"
+                  className="w-32 h-32 sm:w-40 sm:h-40 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPostImage(null)}
+                  className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/70 hover:bg-black text-white text-xs flex items-center justify-center transition-colors"
+                  title="Xóa ảnh"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* Hidden File Input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+
+            {/* Actions Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#EFEAE2]">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCameraOpen(true)}
+                  className="px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95"
+                >
+                  <span>📸</span>
+                  <span>Chụp ảnh ngay</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-1.5 rounded-xl bg-stone-50 border border-stone-200 hover:bg-stone-100 text-[#736357] text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95"
+                >
+                  <span>🖼️</span>
+                  <span>Tải ảnh từ máy</span>
+                </button>
+
+                {/* Privacy selector */}
+                <select
+                  value={privacyMode}
+                  onChange={(e) => setPrivacyMode(e.target.value as PrivacyMode)}
+                  className="px-2.5 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E5DCCE] text-xs font-bold text-[#2C221E] focus:outline-none focus:border-amber-500 cursor-pointer"
+                >
+                  <option value="PUBLIC">🌍 Công khai</option>
+                  <option value="FRIENDS_ONLY">👥 Bạn bè</option>
+                  <option value="PRIVATE">🔒 Chỉ mình tôi</option>
+                </select>
+              </div>
+
+              <button
+                type="button"
+                onClick={handlePublishPost}
+                disabled={isPosting || !postImage}
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-105 text-white font-black text-xs sm:text-sm tracking-wide shadow-md shadow-amber-500/25 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-1.5"
+              >
+                <span>{isPosting ? 'Đang tải lên...' : 'Đăng Bài 🚀'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Camera Modal */}
+      {isCameraOpen && (
+        <CameraModal
+          isOpen={isCameraOpen}
+          itemTitle="Chụp Ảnh Kỷ Luật Bảng Tin"
+          itemIcon="📸"
+          initialPrivacy={privacyMode}
+          onClose={() => setIsCameraOpen(false)}
+          onPublish={handleCameraCapture}
+        />
+      )}
 
       {/* Feed Filter Sub-Tabs */}
       <div className="flex items-center justify-between gap-2">

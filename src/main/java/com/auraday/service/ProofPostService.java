@@ -94,10 +94,15 @@ public class ProofPostService {
                 ? request.getPrivacyMode()
                 : PrivacyMode.PUBLIC;
 
+        String finalImageUrl = request.getImageUrl();
+        if (finalImageUrl != null && finalImageUrl.startsWith("data:image/")) {
+            finalImageUrl = fileStorageService.storeBase64Image(finalImageUrl, "proofs");
+        }
+
         ProofPost post = ProofPost.builder()
                 .user(user)
                 .dailyLog(dailyLog)
-                .imageUrl(request.getImageUrl())
+                .imageUrl(finalImageUrl)
                 .caption(request.getCaption())
                 .privacyMode(mode)
                 .build();

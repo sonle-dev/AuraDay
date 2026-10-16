@@ -5,8 +5,9 @@ import { CheckInView } from './components/checkin/CheckInView';
 import { LockerView } from './components/locker/LockerView';
 import { ProfileSettingsView } from './components/profile/ProfileSettingsView';
 import { FriendsView } from './components/friends/FriendsView';
+import { AuthModal } from './components/auth/AuthModal';
 import { ProofPost } from './types';
-import { authApi, userApi, proofApi, feedApi, friendsApi, dailyLogApi, clearStoredToken } from './services/api';
+import { authApi, userApi, proofApi, feedApi, friendsApi, dailyLogApi, ApiUser } from './services/api';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<'feed' | 'checkin' | 'locker' | 'friends' | 'profile'>('feed');
@@ -15,52 +16,55 @@ export const App: React.FC = () => {
   const [bio, setBio] = useState<string>('Gen Z Glow-up • Kiên quyết không thức khuya, ăn uống healthy & làm việc tập trung ☕🔥');
   const [avatarUrl, setAvatarUrl] = useState<string>('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80');
 
+  const [currentUser, setCurrentUser] = useState<ApiUser | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
   const [lockerPosts, setLockerPosts] = useState<ProofPost[]>([]);
   const [feedPosts, setFeedPosts] = useState<ProofPost[]>([]);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
+
+  const loadUserData = async () => {
+    try {
+      const [stats, feedRes, lockerRes] = await Promise.all([
+        userApi.getStats().catch(() => null),
+        feedApi.getFeed(0, 30).catch(() => null),
+        proofApi.getLocker({ page: 0, size: 30 }).catch(() => null)
+      ]);
+
+      if (stats?.currentStreakDays !== undefined) {
+        setStreakDays(stats.currentStreakDays);
+      }
+      if (feedRes?.content) {
+        setFeedPosts(feedRes.content);
+      }
+      if (lockerRes?.content) {
+        setLockerPosts(lockerRes.content);
+      }
+    } catch (e) {
+      console.warn('Could not load user data from DB:', e);
+    }
+  };
 
   // Synchronize with database on initial load
   useEffect(() => {
     const initData = async () => {
       try {
         setIsInitializing(true);
-        // 1. Authenticate / Bootstrap Session with Backend
+        // Check stored token and bootstrap session
         const user = await authApi.bootstrap();
-        if (user.username) setUsername(user.username);
-        if (user.bio) setBio(user.bio);
-        if (user.avatarUrl) setAvatarUrl(user.avatarUrl);
-
-        // 2. Fetch User Stats (Streak, Locker count, Friends count)
-        try {
-          const stats = await userApi.getStats();
-          if (stats?.currentStreakDays !== undefined) {
-            setStreakDays(stats.currentStreakDays);
-          }
-        } catch (e) {
-          console.warn('Could not load user stats from DB:', e);
-        }
-
-        // 3. Fetch Feed Posts from Database (Excludes private posts strictly)
-        try {
-          const feedRes = await feedApi.getFeed(0, 30);
-          if (feedRes?.content && feedRes.content.length > 0) {
-            setFeedPosts(feedRes.content);
-          }
-        } catch (e) {
-          console.warn('Could not load feed from DB:', e);
-        }
-
-        // 4. Fetch Personal Locker Posts from Database
-        try {
-          const lockerRes = await proofApi.getLocker({ page: 0, size: 30 });
-          if (lockerRes?.content && lockerRes.content.length > 0) {
-            setLockerPosts(lockerRes.content);
-          }
-        } catch (e) {
-          console.warn('Could not load locker from DB:', e);
+        if (user) {
+          setCurrentUser(user);
+          if (user.username) setUsername(user.username);
+          if (user.bio) setBio(user.bio);
+          if (user.avatarUrl) setAvatarUrl(user.avatarUrl);
+          await loadUserData();
+        } else {
+          // No user logged in: show login / register modal!
+          setIsAuthModalOpen(true);
         }
       } catch (err) {
         console.error('Data initialization failed:', err);
+        setIsAuthModalOpen(true);
       } finally {
         setIsInitializing(false);
       }
@@ -68,6 +72,15 @@ export const App: React.FC = () => {
 
     initData();
   }, []);
+
+  const handleAuthSuccess = async (user: ApiUser) => {
+    setCurrentUser(user);
+    if (user.username) setUsername(user.username);
+    if (user.bio) setBio(user.bio);
+    if (user.avatarUrl) setAvatarUrl(user.avatarUrl);
+    setIsAuthModalOpen(false);
+    await loadUserData();
+  };
 
   // Handle Check-In: Persist DailyLog & Proofs directly into PostgreSQL Database
   const handleCheckInSuccess = async (data: any) => {
@@ -110,7 +123,7 @@ export const App: React.FC = () => {
       alert('Đã ghi nhận check-in thành công!');
     }
 
-    setCurrentTab('locker');
+    setCurrentTab('feed');
   };
 
   // Handle Profile Update: Sync to PostgreSQL Database
@@ -194,8 +207,11 @@ export const App: React.FC = () => {
 
   // Handle Logout
   const handleLogout = () => {
-    clearStoredToken();
-    alert('🚪 Bạn đã đăng xuất thành công khỏi AuraDay!');
+    authApi.logout();
+    setCurrentUser(null);
+    setFeedPosts([]);
+    setLockerPosts([]);
+    setIsAuthModalOpen(true);
     setCurrentTab('feed');
   };
 
@@ -219,8 +235,13 @@ export const App: React.FC = () => {
         <FeedView
           posts={feedPosts}
           currentUsername={username}
+          currentUserAvatar={avatarUrl}
           onRefresh={handleRefreshFeed}
           isRefreshing={isFeedRefreshing}
+          onPostCreated={(newPost) => {
+            setFeedPosts((prev) => [newPost, ...prev]);
+            setLockerPosts((prev) => [newPost, ...prev]);
+          }}
           onAddFriend={handleAddFriend}
           onLike={handleLikePost}
           onNudge={handleNudgePost}
@@ -240,6 +261,12 @@ export const App: React.FC = () => {
         />
       )}
       {currentTab === 'friends' && <FriendsView currentUsername={username} />}
+
+      {/* Auth Modal (Đăng nhập / Đăng ký) */}
+      <AuthModal
+        isOpen={isAuthModalOpen || !currentUser}
+        onAuthSuccess={handleAuthSuccess}
+      />
     </AppLayout>
   );
 };

@@ -101,4 +101,35 @@ public class FileStorageService {
             throw new RuntimeException("Lỗi hệ thống khi lưu trữ ảnh avatar: " + originalFilename, ex);
         }
     }
+
+    public String storeBase64Image(String base64Data, String subDir) {
+        if (base64Data == null || base64Data.isBlank()) {
+            throw new BadRequestException("Dữ liệu ảnh base64 không được để trống");
+        }
+
+        String base64Image = base64Data;
+        String extension = ".jpg";
+
+        int commaIndex = base64Data.indexOf(',');
+        if (commaIndex >= 0) {
+            String prefix = base64Data.substring(0, commaIndex).toLowerCase();
+            base64Image = base64Data.substring(commaIndex + 1);
+            if (prefix.contains("image/png")) {
+                extension = ".png";
+            } else if (prefix.contains("image/webp")) {
+                extension = ".webp";
+            }
+        }
+
+        try {
+            byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Image);
+            String uniqueFileName = UUID.randomUUID() + extension;
+            Path targetLocation = Paths.get(uploadBaseDir, subDir, uniqueFileName).toAbsolutePath().normalize();
+            Files.write(targetLocation, imageBytes);
+            return "/uploads/" + subDir + "/" + uniqueFileName;
+        } catch (Exception ex) {
+            log.error("Lỗi khi lưu base64 image: {}", ex.getMessage());
+            throw new RuntimeException("Lỗi khi lưu trữ ảnh: " + ex.getMessage(), ex);
+        }
+    }
 }

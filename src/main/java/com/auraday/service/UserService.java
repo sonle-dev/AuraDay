@@ -60,7 +60,11 @@ public class UserService {
         }
 
         if (request.getAvatarUrl() != null) {
-            user.setAvatarUrl(request.getAvatarUrl().trim());
+            String avatar = request.getAvatarUrl().trim();
+            if (avatar.startsWith("data:image/")) {
+                avatar = fileStorageService.storeBase64Image(avatar, "avatars");
+            }
+            user.setAvatarUrl(avatar);
         }
 
         if (request.getDefaultPrivacyMode() != null) {
