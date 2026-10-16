@@ -11,6 +11,17 @@ echo "    🚀 ĐANG BẮT ĐẦU TRIỂN KHAI AURADAY LÊN AWS EC2...     "
 echo "=========================================================="
 echo ""
 
+# 0. Cấu hình 2GB Swap Memory để máy ảo EC2 t3.micro không bị tràn RAM
+if [ $(free -m | awk '/^Swap:/ {print $2}') -eq 0 ]; then
+    echo "💾 Đang kích hoạt 2GB Swap SSD để chống đơ và chống tràn RAM cho EC2..."
+    sudo fallocate -l 2G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab || true
+    echo "✅ Đã kích hoạt 2GB Swap Memory thành công!"
+fi
+
 # 1. Kiểm tra và cài đặt Docker + Docker Compose nếu chưa có
 if ! command -v docker &> /dev/null; then
     echo "📦 Đang cài đặt Docker và Docker Compose Engine..."
@@ -45,9 +56,15 @@ mkdir -p uploads/proofs uploads/avatars
 chmod -R 777 uploads
 
 # 4. Build và khởi chạy Docker Compose Stack
-echo "🔨 Đang tiến hành build container và kích hoạt hệ thống..."
+echo "🔨 Đang tiến hành build Frontend..."
+sudo docker compose build frontend
+
+echo "🔨 Đang tiến hành build Backend..."
+sudo docker compose build backend
+
+echo "🚀 Đang khởi động các dịch vụ..."
 sudo docker compose down || true
-sudo docker compose up -d --build
+sudo docker compose up -d
 
 echo ""
 echo "=========================================================="

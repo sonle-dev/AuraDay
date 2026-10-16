@@ -8,6 +8,17 @@ echo "=========================================================="
 echo "    🔒 ĐANG KÍCH HOẠT HTTPS & ÉP CHUYỂN HƯỚNG CHO: $DOMAIN"
 echo "=========================================================="
 
+# 0. Cấu hình 2GB Swap Memory để máy ảo EC2 t3.micro không bị tràn RAM
+if [ $(free -m | awk '/^Swap:/ {print $2}') -eq 0 ]; then
+    echo "💾 Đang kích hoạt 2GB Swap SSD để chống đơ và chống tràn RAM cho EC2..."
+    sudo fallocate -l 2G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab || true
+    echo "✅ Đã kích hoạt 2GB Swap Memory thành công!"
+fi
+
 # 1. Cài đặt certbot nếu chưa có
 if ! command -v certbot &> /dev/null; then
     echo "📦 Đang cài đặt Certbot để lấy chứng chỉ SSL miễn phí..."
@@ -109,9 +120,11 @@ EOF
 # Thay thế tên miền thực tế vào file nginx.conf
 sed -i "s/DOMAIN_PLACEHOLDER/$DOMAIN/g" frontend/nginx.conf
 
-# 5. Khởi động lại container Frontend với chứng chỉ SSL và port 443
+# 5. Khởi động lại container với chứng chỉ SSL và port 443
 echo "🚀 Đang khởi động lại hệ thống với HTTPS..."
-sudo docker compose up -d --build frontend
+sudo docker compose build frontend
+sudo docker compose build backend
+sudo docker compose up -d
 
 echo ""
 echo "=========================================================="

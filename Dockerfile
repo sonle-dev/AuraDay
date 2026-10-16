@@ -1,6 +1,7 @@
 # Stage 1: Build Spring Boot JAR
 FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /app
+ENV GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx384m -XX:MaxMetaspaceSize=128m -XX:+TieredCompilation -XX:TieredStopAtLevel=1'"
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle settings.gradle ./
@@ -23,4 +24,4 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 USER aurauser
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xmx384m", "-Xms128m", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
